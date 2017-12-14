@@ -6,14 +6,17 @@
 #    By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2017/12/12 15:33:43 by iprokofy         ###   ########.fr        #
+#    Updated: 2017/12/14 14:28:42 by iprokofy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ssl
 SRC = main.c\
 		base64.c\
-		buff_read.c
+		buff_read.c\
+		des_tables.c\
+		des_ecb.c\
+		print_bits.c
 LIBFT = libft/ft_memset.c\
 		libft/ft_bzero.c\
 		libft/ft_memcpy.c\

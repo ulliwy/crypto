@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2017/12/13 11:40:53 by iprokofy         ###   ########.fr       */
+/*   Updated: 2017/12/14 14:29:52 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,28 @@
 
 # define BUFF_SIZE	1
 
-typedef struct	s_cmd
+extern unsigned char	g_pc1[];
+
+typedef struct			s_cmd
 {
-	int			b64;
-}				t_cmd;
+	int					b64;
+	int 				ecb;
+}						t_cmd;
 
-typedef struct	s_opt
+typedef struct			s_opt
 {
-	int			e;
-	int			d;
-	char		*input_file;
-	char		*output_file;
-}				t_opt;
+	int					e;
+	int					d;
+	unsigned long		main_key;
+	char				*entered_key;
+	char				*input_file;
+	char				*output_file;
+}						t_opt;
 
-void			b64(t_opt opts);
+void					b64(t_opt opts);
+void					des_prep(t_opt opts);
 
-char			*get_from_fd(int fd);
+char					*get_from_fd(int fd);
+void					print_bits(unsigned long octet);
 
 #endif
