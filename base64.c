@@ -6,24 +6,116 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 11:23:32 by iprokofy          #+#    #+#             */
-/*   Updated: 2017/12/12 16:30:46 by iprokofy         ###   ########.fr       */
+/*   Updated: 2017/12/13 16:02:37 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl.h"
 
-
-void	b64_decode(char *in)
+char 	giv(char c)
 {
-	ft_putstr(in);
+	if (c >= 'A' && c<= 'Z')
+		return (c - 65);
+	else if (c >= 'a' && c <= 'z')
+		return (c - 71);
+	else if (c >= '0' && c <= '9')
+		return (c + 4);
+	else if (c == '+')
+		return (62);
+	else
+		return (63);
 }
 
-void	b64_encode(char *in)
+void	*put_stream_err()
+{
+	ft_putstr("Invalid character in input stream.");
+	return (NULL);
+}
+
+char	*remove_spaces(char *in)
+{
+	int 	i;
+	int 	j;
+
+	i = 0;
+	j = 0;
+	while (in[i])
+	{
+		if ((in[i] >= 'A' && in[i] <='Z') || (in[i] >= 'a' && in[i] <='z') ||
+			(in[i] >= '0' && in[i] <='9') || in[i] == '+' || in[i] == '/' ||
+			in[i] == '=')
+		{
+			in[j] = in[i];
+			i++;
+			j++;
+		}
+		else if (in[i] == ' ' || in[i] == '\n' || in[i] == '\t')
+			i++;
+		else
+			return (put_stream_err());
+	}
+	in[j] = '\0';
+	return (in);
+}
+
+void	b64_decode(char *in, int fd)
+{
+	in = remove_spaces(in);
+	while (*in && *in != '=')
+	{
+		ft_putchar_fd((giv(in[0]) << 2) | ((giv(in[1]) == -1 ? 0 : (giv(in[1])) >> 4)), fd);
+		if (in[2] != '=')
+			ft_putchar_fd(((giv(in[1]) & 15) << 4) | ((giv(in[2]) == -1 ? 0 : giv(in[2])) >> 2), fd);
+		if (in[3] != '=')
+			ft_putchar_fd(((giv(in[2]) & 3) << 6) | ((giv(in[3]) == -1 ? 0 : giv(in[3])) & 63), fd);
+		in += 4;
+	}
+}
+
+void	b64_encode(unsigned char *in, int fd)
 {
 	char	*b64;
+	int 	b;
 
+	b = 0;
 	b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	ft_putstr(in);
+	while (*in)
+	{
+		ft_putchar_fd(b64[(int)(in[0] >> 2)], fd);
+		ft_putchar_fd(b64[(int)(((in[0] & 3) << 4) | ((in[1] & 240) >> 4))], fd);
+		if (in[1])
+			ft_putchar_fd(b64[(int)(((in[1] & 15) << 2) | ((in[2] & 192) >> 6))], fd);
+		else
+		{
+			ft_putchar_fd('=', fd);
+			b = 1;
+		}
+		if (in[2])
+			ft_putchar_fd(b64[(int)(in[2] & 63)], fd);
+		else
+		{
+			ft_putchar_fd('=', fd);
+			b = 1;
+		}
+		if (b)
+			break;
+		in += 3;
+	}
+	ft_putchar_fd('\n', fd);
+}
+
+void	put_open_err(char *name)
+{
+	char *err_msg;
+	int len;
+
+	len = ft_strlen(name);
+	err_msg = (char *)ft_memalloc(len + 18);
+	ft_strcpy(err_msg, "Unable to open \'");
+	ft_strcpy(err_msg + 16, name);
+	err_msg[16 + len] = '\'';
+	perror(err_msg);
+	free(err_msg);
 }
 
 void	b64(t_opt opts)
@@ -35,14 +127,28 @@ void	b64(t_opt opts)
 		input = get_from_fd(0);
 	else
 	{
-		fd = open(opts.input_file, O_RDONLY);
+		if ((fd = open(opts.input_file, O_RDONLY)) == -1)
+		{
+			put_open_err(opts.input_file);
+			return ;
+		}
 	 	input = get_from_fd(fd);
 	 	close(fd);
 	}
-	if (opts.d)
-		b64_decode(input);
+	if (!opts.output_file)
+		fd = 1;
 	else
-		b64_encode(input);
+	{
+		if ((fd = open(opts.output_file, O_CREAT | O_WRONLY | O_TRUNC, 0644)) == -1)
+		{
+			put_open_err(opts.output_file);
+			return ;
+		}
+	}
+	if (opts.d)
+		b64_decode(input, fd);
+	else
+		b64_encode((unsigned char *)input, fd);
+	close(fd);
 	free(input);
-	//printf("input buffer: <<%s>>\n", input);
 }

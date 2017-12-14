@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2017/12/12 15:58:16 by iprokofy         ###   ########.fr       */
+/*   Updated: 2017/12/13 11:40:53 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 # include <stdio.h>
 
-# define BUFF_SIZE	10
+# define BUFF_SIZE	1
 
 typedef struct	s_cmd
 {
