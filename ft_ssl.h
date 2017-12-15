@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2017/12/14 16:28:52 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2017/12/14 17:53:45 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 # include <stdio.h>
 
-# define BUFF_SIZE	100
+# define BUFF_SIZE	512
 
 extern unsigned char	g_pc1[];
 
@@ -43,7 +43,7 @@ typedef struct			s_opt
 void					b64(t_opt opts);
 void					des_prep(t_opt opts);
 
-char	*get_from_fd(int fd, ssize_t *r);
-void					print_bits(unsigned long octet);
+char					*get_from_fd(int fd, ssize_t *r);
+void					print_bits(unsigned long octet, int sep);
 
 #endif

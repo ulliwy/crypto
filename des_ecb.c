@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des_ecb.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2017/12/14 14:33:54 by iprokofy         ###   ########.fr       */
+/*   Updated: 2017/12/14 17:54:39 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,23 +48,21 @@ unsigned long	permute_bits(unsigned long k)
 	unsigned long	k_plus;
 	unsigned long	one;
 	int				i;
-	unsigned long	temp;
 
 	i = 0;
 	k_plus = 0;
 	one = 1;
 	ft_putstr("original: ");
-	print_bits(k);
+	print_bits(k, 8);
 	ft_putstr("\n");
 	while (i < 56)
 	{
-		ft_putnbr(i);
-		ft_putstr(": ");
-		temp = ((one << (64 - g_pc1[i])) & k) << (64 - g_pc1[i] - (i + 1));
-		print_bits(temp);
-		ft_putstr("\n");
+		k_plus = k_plus | ((one << (64 - g_pc1[i])) & k ? one << (55 - i) : 0);
 		i++;
 	}
+	ft_putstr("k_plus: ");
+	print_bits(k_plus, 7);
+	ft_putstr("\n");
 	return (k);
 }
 
