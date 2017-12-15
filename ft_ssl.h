@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ssl.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2017/12/14 17:53:45 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2017/12/15 14:05:34 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@
 
 # define BUFF_SIZE	512
 
-extern unsigned char	g_pc1[];
+extern 	unsigned char	g_pc1[];
+extern	unsigned char	g_pc2[];
+extern	unsigned char	g_shifts[];
+extern	unsigned char	g_ip[];
 
 typedef struct			s_cmd
 {

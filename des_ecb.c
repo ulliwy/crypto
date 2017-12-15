@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des_ecb.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2017/12/14 17:54:39 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2017/12/15 14:16:41 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int		get_key(t_opt *opts)
 
 	i = 0;
 	len = ft_strlen(opts->entered_key);
-	if (opts->entered_key[len -1] == '\n')
+	if (opts->entered_key[len - 1] == '\n')
 		len--;
 	while (i < len)
 	{
@@ -43,35 +43,107 @@ int		get_key(t_opt *opts)
 	return (1);
 }
 
-unsigned long	permute_bits(unsigned long k)
+unsigned long	permut_pc2(unsigned long c0, unsigned long d0)
+{
+	unsigned long	key;
+	int				i;
+
+	i = 0;
+	key = 0;
+	while (i < 48)
+	{
+		key = key | (((1UL << (56 - g_pc2[i])) & (c0 | d0)) ? 1UL << (47 - i) : 0);
+		i++;
+	}
+	return (key);
+}
+
+void	permut_c0d0(unsigned long *c0, unsigned long *d0, unsigned long	keys[16])
+{
+	int i;
+	unsigned long	cl;
+	unsigned long	cr;
+	unsigned long	dl;
+	unsigned long	dr;
+
+	i = 0;
+	while (i < 16)
+	{
+		// ft_putstr("c");
+		// ft_putnbr(i + 1);
+		// ft_putstr(" -> ");
+		cr = *c0 >> (28 - g_shifts[i]);
+		cl = *c0 << g_shifts[i];
+		*c0 = (cl | cr) & ((1UL << 56) - (1UL << 28));
+		// print_bits(*c0, 7);
+		// ft_putstr("\n");
+
+		// ft_putstr("d");
+		// ft_putnbr(i + 1);
+		// ft_putstr(" -> ");
+		dr = *d0 >> (28 - g_shifts[i]);
+		dl = *d0 << g_shifts[i];
+		*d0 = (dl | dr) & ((1UL << 28) - 1UL);
+		// print_bits(*d0, 7);
+		// ft_putstr("\n");
+		keys[i] = permut_pc2(*c0, *d0);
+		// ft_putstr("key");
+		// ft_putnbr(i + 1);
+		// ft_putstr(" -> ");
+		// print_bits(keys[i], 6);
+		// ft_putstr("\n\n");
+		i++;
+	}
+}
+
+unsigned long	permute_bits(unsigned long k, unsigned long	keys[16])
 {
 	unsigned long	k_plus;
 	unsigned long	one;
+	unsigned long	c0;
+	unsigned long	d0;
 	int				i;
 
 	i = 0;
 	k_plus = 0;
 	one = 1;
-	ft_putstr("original: ");
-	print_bits(k, 8);
-	ft_putstr("\n");
+	// ft_putstr("original: ");
+	// print_bits(k, 8);
+	// ft_putstr("\n");
 	while (i < 56)
 	{
 		k_plus = k_plus | ((one << (64 - g_pc1[i])) & k ? one << (55 - i) : 0);
 		i++;
 	}
-	ft_putstr("k_plus: ");
-	print_bits(k_plus, 7);
-	ft_putstr("\n");
+	c0 = ((1UL << 56) - (1UL << 28)) & k_plus;
+	d0 = ((1UL << 28) - 1UL) & k_plus;
+
+	// ft_putstr("k_plus: ");
+	// print_bits(k_plus, 7);
+	// ft_putstr("\n");
+	// ft_putstr("c0:     ");
+	// print_bits(c0, 7);
+	// ft_putstr("\n");
+	// ft_putstr("d0:     ");
+	// print_bits(d0, 7);
+	// ft_putstr("\n");
+	permut_c0d0(&c0, &d0, keys);
+
 	return (k);
 }
 
 void	des_ecb(t_opt opts)
 {
 	//unsigned long	keys[16];
-	unsigned long	k_plus;
+	unsigned long	keys[16];
 
-	k_plus = permute_bits(opts.main_key);
+	permute_bits(opts.main_key, keys);
+	// int i= 0;
+	// while (i < 16)
+	// {
+	// 	printf("%d: %lu\n", i+ 1, keys[i]);
+	// 	i++;
+	// }
 }
 
 void	des_prep(t_opt opts)
