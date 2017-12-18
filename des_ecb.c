@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2017/12/15 14:16:41 by iprokofy         ###   ########.fr       */
+/*   Updated: 2017/12/18 13:11:20 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,12 +132,67 @@ unsigned long	permute_bits(unsigned long k, unsigned long	keys[16])
 	return (k);
 }
 
+void	des_ecb_decode(char *in, int fd)
+{
+	ft_putstr_fd(in, fd);
+}
+
+void	des_ecb_encode(unsigned char *in, int fd, ssize_t r)
+{
+	int 	i;
+	int 	j;
+
+	i = 0;
+	while (i < r)
+	{
+		j = 0;
+		while (j < 64)
+		{
+			in[] = k_plus | ((one << (64 - g_pc1[i])) & k ? one << (55 - i) : 0);
+			i++;
+		}
+
+		i = i + 16;
+	}
+}
+
 void	des_ecb(t_opt opts)
 {
-	//unsigned long	keys[16];
 	unsigned long	keys[16];
+	char	*input;
+	int 	fd;
+	ssize_t r;
 
 	permute_bits(opts.main_key, keys);
+	if (!opts.input_file)
+		input = get_from_fd(0, &r);
+	else
+	{
+		if ((fd = open(opts.input_file, O_RDONLY)) == -1)
+		{
+			put_open_err(opts.input_file);
+			return ;
+		}
+	 	input = get_from_fd(fd, &r);
+	 	close(fd);
+	}
+	if (!opts.output_file)
+		fd = 1;
+	else
+	{
+		if ((fd = open(opts.output_file, O_CREAT | O_WRONLY | O_TRUNC, 0644)) == -1)
+		{
+			put_open_err(opts.output_file);
+			return ;
+		}
+	}
+	if (opts.d)
+		des_ecb_decode(input, fd);
+	else
+		des_ecb_encode((unsigned char *)input, fd, r);
+	close(fd);
+	free(input);
+
 	// int i= 0;
 	// while (i < 16)
 	// {
