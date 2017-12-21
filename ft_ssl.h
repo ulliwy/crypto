@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2017/12/15 14:05:34 by iprokofy         ###   ########.fr       */
+/*   Updated: 2017/12/20 14:42:09 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,7 @@ void					des_prep(t_opt opts);
 
 char					*get_from_fd(int fd, ssize_t *r);
 void					print_bits(unsigned long octet, int sep);
+
+void					put_open_err(char *name);
 
 #endif
