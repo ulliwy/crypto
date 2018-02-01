@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2017/12/20 14:42:09 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/01/31 14:44:20 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,19 @@ extern 	unsigned char	g_pc1[];
 extern	unsigned char	g_pc2[];
 extern	unsigned char	g_shifts[];
 extern	unsigned char	g_ip[];
+extern	unsigned char	g_ebit[];
+extern	unsigned char	g_s1[];
+extern	unsigned char	g_s2[];
+extern	unsigned char	g_s3[];
+extern	unsigned char	g_s4[];
+extern	unsigned char	g_s5[];
+extern	unsigned char	g_s6[];
+extern	unsigned char	g_s7[];
+extern	unsigned char	g_s8[];
+extern	unsigned char	*g_ss[];
+extern	unsigned char	g_p[];
+extern	unsigned char	g_ip_1[];
+
 
 typedef struct			s_cmd
 {

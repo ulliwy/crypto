@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2017/12/14 14:25:12 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/01/23 11:14:52 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,23 @@ int		err_usage()
 	return (0);
 }
 
+int		err_usage_commands(char *cmd)
+{
+	ft_putstr("ft_ssl: Error: '");
+	ft_putstr(cmd);
+	ft_putstr("' is an invalid command.\n\n");
+	ft_putstr("Standard commands:\n\nMessage Digest commands:\n\n");
+	ft_putstr("Cipher commands:\nbase64\ndes\ndes-ecb\ndec-cbc\n");
+	return (0);
+}
+
 int		parse_command(char **argv, t_cmd *cmd)
 {
 	if (!(ft_strcmp(argv[1], "base64")))
 		cmd->b64 = 1;
 	else if (!(ft_strcmp(argv[1], "des-ecb")))
+		cmd->ecb = 1;
+	else if (!(ft_strcmp(argv[1], "des")))
 		cmd->ecb = 1;
 	else
 		return (0);
@@ -97,7 +109,7 @@ int		main(int argc, char **argv)
 	if (argc < 2)
 		return (err_usage());
 	if (!parse_command(argv, &cmd))
-		return (err_usage());
+		return (err_usage_commands(argv[1]));
 	i = 2;
 	while (i < argc)
 	{
