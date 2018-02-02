@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/01/31 16:30:16 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/02/01 16:10:58 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,26 @@ unsigned long	ff(unsigned long r, unsigned long k)
 	return (f);
 }
 
+unsigned long	reverse_bits(unsigned long msg) {
+	unsigned long tmp = 0;
+
+	// ft_putstr("msg1: ");
+	// print_bits(msg, 8);
+	// ft_putstr("\n");
+	tmp = tmp | (msg & 255) << (7 * 8);
+	tmp = tmp | (msg & 65280) << (5 * 8);
+	tmp = tmp | (msg & 16711680 ) << (3 * 8);
+	tmp = tmp | (msg & 4278190080 ) << (1 * 8);
+	tmp = tmp | ((msg >> 8) & 4278190080);
+	tmp = tmp | ((msg >> (3 * 8)) & 16711680);
+	tmp = tmp | ((msg >> (5 * 8)) & 65280);
+	tmp = tmp | ((msg >> (7 * 8)) & 255);
+	// ft_putstr("msg2: ");
+	// print_bits(tmp, 8);
+	// ft_putstr("\n");
+	return tmp;
+}
+
 void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 {
 	unsigned long	keys[16];
@@ -213,10 +233,11 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	msg = (unsigned long *)in;
 	//printf("message: <%s>\n", in);
 	printf("message: <%s>\n", (unsigned char *)msg);
+	printf("message in hex: ");
 	for (i = 0; i < size; ++i) {
 		if (i && i % 8 == 0)
 			printf(" ");
-		printf("%c%X ", in[i], in[i]);
+		printf("%X", in[i]);
 	}
 	printf("\n");
 	// for (i = 0; i < size; ++i) {
@@ -226,8 +247,11 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	// }
 	// printf("\n");
 	i = 0;
-	while (i < size / 8)
+	while (i < size / 8 + ((size % 8) ? 1 : 0))
 	{
+		//printf("1: %lX \n", msg[i]);
+		msg[i] = reverse_bits(msg[i]);
+		//printf("2: %lX \n", msg[i]);
 		//printf("%lX\n", msg[i]);
 		// ft_putstr("msg:    ");
 		// print_bits(msg[i], 4);
@@ -274,6 +298,7 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		// print_bits(r[16], 4);
 		//ft_putstr("\n\n");
 		msg[i] = temp;
+		printf("res: %lX\n", msg[i]);
 		i++;
 	}
 	in = (unsigned char *)msg;
