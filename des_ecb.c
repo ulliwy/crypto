@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/02/01 16:10:58 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/02/06 13:48:41 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,31 +228,29 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	unsigned long	r[17];
 
 	create_subkeys(opts.main_key, keys);
-	i = 0;
-	fd = 0;
 	msg = (unsigned long *)in;
-	//printf("message: <%s>\n", in);
-	printf("message: <%s>\n", (unsigned char *)msg);
-	printf("message in hex: ");
+	printf("size: <%zd>\n", size);
+	//printf("message: <%s>\n", (unsigned char *)msg);
+	printf("message in hex: \n");
 	for (i = 0; i < size; ++i) {
 		if (i && i % 8 == 0)
-			printf(" ");
+			printf("\n");
 		printf("%X", in[i]);
 	}
-	printf("\n");
+	printf("\n____________\n");
+	// printf("\n");
 	// for (i = 0; i < size; ++i) {
 	// 	if (i && i % 8 == 0)
 	// 		printf(" ");
 	// 	printf("%c", in[i]);
 	// }
-	// printf("\n");
 	i = 0;
 	while (i < size / 8 + ((size % 8) ? 1 : 0))
 	{
 		//printf("1: %lX \n", msg[i]);
 		msg[i] = reverse_bits(msg[i]);
-		//printf("2: %lX \n", msg[i]);
-		//printf("%lX\n", msg[i]);
+		printf("2: %lX \n", msg[i]);
+		printf("%d\n", i);
 		// ft_putstr("msg:    ");
 		// print_bits(msg[i], 4);
 		// ft_putstr("\n");
@@ -297,17 +295,21 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		// ft_putstr("r16: ");
 		// print_bits(r[16], 4);
 		//ft_putstr("\n\n");
-		msg[i] = temp;
-		printf("res: %lX\n", msg[i]);
+		//msg[i] = temp;
+		temp = reverse_bits(temp);
+		write(fd, &temp, sizeof(temp));
+		//
+		//printf("res: %lX\n", msg[i]);
 		i++;
 	}
 	in = (unsigned char *)msg;
-	for (i = 0; i < size; ++i) {
-		if (i && i % 8 == 0)
-			printf(" ");
-		printf("%X", in[i]);
-	}
-	printf("\n");
+	//write(fd, msg, size);
+	// for (i = 0; i < size; ++i) {
+	// 	if (i && i % 8 == 0)
+	// 		printf(" ");
+	// 	printf("%X", in[i]);
+	// }
+	// printf("\n");
 }
 
 void	des_ecb(t_opt opts)
@@ -329,17 +331,19 @@ void	des_ecb(t_opt opts)
 	 	input = get_from_fd(fd, &r);
 	 	close(fd);
 	}
-	if (!opts.output_file)
+	if (!opts.output_file) {
 		fd = 1;
+	}
 	else
 	{
-		if ((fd = open(opts.output_file, O_CREAT | O_WRONLY | O_TRUNC, 0644)) == -1)
+		if ((fd = open(opts.output_file, O_CREAT | O_WRONLY | O_APPEND | O_TRUNC, 0644)) == -1)
 		{
+			
 			put_open_err(opts.output_file);
 			return ;
 		}
 	}
-	printf("input: <%s>, size: %zd\n", input, r);
+	// printf("input: <%s>, size: %zd\n", input, r);
 	// input[15] = 0x01;
 	// input[14] = 0x23;
 	// input[13] = 0x45;
