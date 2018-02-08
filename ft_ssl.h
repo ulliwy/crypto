@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/02/07 12:46:07 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/02/08 15:22:54 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 # include <stdio.h>
 
-# define BUFF_SIZE	512
+# define BUFF_SIZE	8
 
 extern 	unsigned char	g_pc1[];
 extern	unsigned char	g_pc2[];

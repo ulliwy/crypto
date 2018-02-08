@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/07 12:43:49 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/02/07 12:46:16 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/02/08 15:19:26 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void	pad(unsigned char *in, ssize_t size)
 	int i;
 
 	pads = 8 - (unsigned char)(size % 8);
+	//printf("pads: %d\n", pads);
 	i = 0;
 	while (i < pads)
 	{

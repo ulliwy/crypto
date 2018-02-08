@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 14:07:40 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/01/31 13:47:17 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/02/08 14:44:35 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*get_from_fd(int fd, ssize_t *r)
 	ssize_t		rd;
 	int 		offset;
 
-	if (!(input = (char *)ft_memalloc(BUFF_SIZE + 1)))
+	if (!(input = (char *)ft_memalloc(BUFF_SIZE + 9)))
 		return (NULL);
 	offset = 0;
 	*r = 0;
@@ -31,7 +31,7 @@ char	*get_from_fd(int fd, ssize_t *r)
 		offset++;
 		if (rd == BUFF_SIZE)
 		{
-			new = (char *)ft_memalloc(BUFF_SIZE + offset * BUFF_SIZE + 1);
+			new = (char *)ft_memalloc(BUFF_SIZE + offset * BUFF_SIZE + 9);
 			ft_memcpy(new, input, offset * BUFF_SIZE);
 			free(input);
 			input = new;
