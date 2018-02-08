@@ -6,7 +6,7 @@
 #    By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2017/12/14 14:28:42 by iprokofy         ###   ########.fr        #
+#    Updated: 2018/02/07 12:44:25 by iprokofy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,8 @@ SRC = main.c\
 		buff_read.c\
 		des_tables.c\
 		des_ecb.c\
-		print_bits.c
+		print_bits.c\
+		block_handle.c
 LIBFT = libft/ft_memset.c\
 		libft/ft_bzero.c\
 		libft/ft_memcpy.c\

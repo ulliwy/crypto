@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/01/31 14:44:20 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/02/07 12:46:07 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ typedef struct			s_opt
 
 void					b64(t_opt opts);
 void					des_prep(t_opt opts);
+unsigned long			reverse_bits(unsigned long msg);
+void					pad(unsigned char *in, ssize_t size);
 
 char					*get_from_fd(int fd, ssize_t *r);
 void					print_bits(unsigned long octet, int sep);
