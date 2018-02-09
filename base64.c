@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   base64.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 11:23:32 by iprokofy          #+#    #+#             */
-/*   Updated: 2017/12/14 17:13:16 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/02/08 16:35:40 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char 	giv(char c)
 
 void	*put_stream_err()
 {
-	ft_putstr("Invalid character in input stream.");
+	ft_putstr("Invalid character in input stream.\n");
 	return (NULL);
 }
 
@@ -49,8 +49,9 @@ char	*remove_spaces(char *in)
 			i++;
 			j++;
 		}
-		else if (in[i] == ' ' || in[i] == '\n' || in[i] == '\t')
+		else if (in[i] == ' ' || in[i] == '\n' || in[i] == '\t' || in[i] == 13) {
 			i++;
+		}
 		else
 			return (put_stream_err());
 	}
@@ -61,8 +62,9 @@ char	*remove_spaces(char *in)
 void	b64_decode(char *in, int fd)
 {
 	in = remove_spaces(in);
-	while (*in && *in != '=')
+	while (in && *in && *in != '=')
 	{
+
 		ft_putchar_fd((giv(in[0]) << 2) | ((giv(in[1]) == -1 ? 0 : (giv(in[1])) >> 4)), fd);
 		if (in[2] != '=')
 			ft_putchar_fd(((giv(in[1]) & 15) << 4) | ((giv(in[2]) == -1 ? 0 : giv(in[2])) >> 2), fd);
