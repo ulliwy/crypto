@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des_ecb.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/02/08 15:29:51 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/02/14 12:23:15 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,10 @@ int		get_key(t_opt *opts)
 
 	i = 0;
 	len = ft_strlen(opts->entered_key);
+
 	if (opts->entered_key[len - 1] == '\n')
 		len--;
-	while (i < len)
+	while (i < len && i < 16)
 	{
 		c = ft_tolower(opts->entered_key[i]);
 		if (!((c >= 'a' && c <= 'f') || (c >= '0' && c <= '9')))
@@ -41,6 +42,12 @@ int		get_key(t_opt *opts)
 		opts->main_key = opts->main_key * 16 + c;
 		i++;
 	}
+	while (i < 16)
+	{
+		opts->main_key = opts->main_key * 16;
+		i++;
+	}
+	printf("%lX\n", opts->main_key);
 	return (1);
 }
 
