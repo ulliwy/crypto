@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/01/23 11:14:52 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/02/16 12:59:54 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ int		parse_opts(char **av, int i, t_opt *opts)
 			opts->e = 1;
 		else if (av[i][1] == 'd')
 			opts->d = 1;
+		else if (av[i][1] == 'a')
+			opts->a = 1;
 		else if (av[i][1] == 'i')
 		{
 			opts->input_file = av[i + 1];
@@ -77,10 +79,13 @@ void	opts_init(t_opt *opts)
 {
 	opts->e = 1;
 	opts->d = 0;
+	opts->a = 0;
 	opts->main_key = 0;
 	opts->entered_key = NULL;
 	opts->input_file = NULL;
 	opts->output_file = NULL;
+	opts->in = NULL;
+	opts->out = NULL;
 }
 
 void	cmd_init(t_cmd *cmd)
@@ -118,7 +123,7 @@ int		main(int argc, char **argv)
 	}
 	//print_opts(opts);
 	if (cmd.b64)
-		b64(opts);
+		b64(&opts);
 	else if (cmd.ecb)
 		des_prep(opts);
 	return (0);

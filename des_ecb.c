@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des_ecb.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/02/14 12:23:15 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/02/16 15:49:39 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int		get_key(t_opt *opts)
 		opts->main_key = opts->main_key * 16;
 		i++;
 	}
-	printf("%lX\n", opts->main_key);
+	//printf("%lX\n", opts->main_key);
 	return (1);
 }
 
@@ -391,14 +391,20 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		// print_bits(r[16], 4);
 		//ft_putstr("\n\n");
 		//msg[i] = temp;
-		temp = reverse_bits(temp);
-		write(fd, &temp, sizeof(temp));
+		msg[i] = reverse_bits(temp);
+		//write(fd, &temp, sizeof(temp));
 		//
 		//printf("res: %lX\n", msg[i]);
 		i++;
 	}
-	//in = (unsigned char *)msg;
-	//write(fd, msg, size);
+	in = (unsigned char *)msg;
+	opts.in = in;
+	//write(fd, in, ft_strlen((char *)in));
+	//write(fd, "\n", 1);
+	if (opts.a)
+		b64_encode(&opts, (size / 8 + 1) * sizeof(temp));
+	else
+		write(fd, msg, (size / 8 + 1) * sizeof(temp));
 	// for (i = 0; i < size; ++i) {
 	// 	if (i && i % 8 == 0)
 	// 		printf(" ");
@@ -407,31 +413,29 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	// printf("\n");
 }
 
-void	des_ecb(t_opt opts)
+void	des_ecb(t_opt *opts)
 {
 	char	*input;
-	int 	fd;
 	ssize_t r;
 
-	
-	if (!opts.input_file)
+	if (!opts->input_file)
 		input = get_from_fd(0, &r);
 	else
 	{
-		if ((fd = open(opts.input_file, O_RDONLY)) == -1)
+		if ((opts->fd = open(opts->input_file, O_RDONLY)) == -1)
 		{
-			put_open_err(opts.input_file);
+			put_open_err(opts->input_file);
 			return ;
 		}
-	 	input = get_from_fd(fd, &r);
-	 	close(fd);
+	 	input = get_from_fd(opts->fd, &r);
+	 	close(opts->fd);
 	}
-	if (!opts.output_file) {
-		fd = 1;
+	if (!opts->output_file) {
+		opts->fd = 1;
 	}
-	else if ((fd = open(opts.output_file, O_CREAT | O_WRONLY | O_APPEND | O_TRUNC, 0644)) == -1)
+	else if ((opts->fd = open(opts->output_file, O_CREAT | O_WRONLY | O_APPEND | O_TRUNC, 0644)) == -1)
 	{
-		put_open_err(opts.output_file);
+		put_open_err(opts->output_file);
 		return ;
 	}
 	// input[7] = 0x05;
@@ -450,11 +454,11 @@ void	des_ecb(t_opt opts)
 	// input[5] = 0xAB;
 	// input[6] = 0xCD;
 	// input[7] = 0xEF;
-	if (opts.d)
-		des_ecb_decode((unsigned char *)input, fd, r, opts);
+	if (opts->d)
+		des_ecb_decode((unsigned char *)input, opts->fd, r, *opts);
 	else
-		des_ecb_encode((unsigned char *)input, fd, r, opts);
-	close(fd);
+		des_ecb_encode((unsigned char *)input, opts->fd, r, *opts);
+	close(opts->fd);
 	free(input);
 }
 
@@ -472,7 +476,7 @@ void	des_prep(t_opt opts)
 	}
 	if (!get_key(&opts))
 		return ;
-	des_ecb(opts);
+	des_ecb(&opts);
 	if (allocated)
 		free(opts.entered_key);
 }

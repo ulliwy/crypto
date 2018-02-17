@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/02/08 15:22:54 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/02/16 15:45:35 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 # include <stdio.h>
 
-# define BUFF_SIZE	8
+# define BUFF_SIZE	512
 
 extern 	unsigned char	g_pc1[];
 extern	unsigned char	g_pc2[];
@@ -50,13 +50,18 @@ typedef struct			s_opt
 {
 	int					e;
 	int					d;
+	int 				a;
 	unsigned long		main_key;
 	char				*entered_key;
 	char				*input_file;
 	char				*output_file;
+	unsigned char		*in;
+	unsigned char		*out;
+	int 				fd;
 }						t_opt;
 
-void					b64(t_opt opts);
+void					b64(t_opt *opts);
+void					b64_encode(t_opt *opts, ssize_t r);
 void					des_prep(t_opt opts);
 unsigned long			reverse_bits(unsigned long msg);
 void					pad(unsigned char *in, ssize_t size);
