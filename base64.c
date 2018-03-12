@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 11:23:32 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/02/16 15:59:53 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/12 16:09:41 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	*put_stream_err()
 	return (NULL);
 }
 
-char	*remove_spaces(char *in)
+unsigned char	*remove_spaces(unsigned char *in, ssize_t *size)
 {
 	int 	i;
 	int 	j;
@@ -56,22 +56,35 @@ char	*remove_spaces(char *in)
 			return (put_stream_err());
 	}
 	in[j] = '\0';
+	*size = j;
 	return (in);
 }
 
-void	b64_decode(char *in, int fd)
+unsigned char	*b64_decode(unsigned char *in, ssize_t *r)
 {
-	in = remove_spaces(in);
+	in = remove_spaces(in, r);
+	ssize_t new_size = (*r / 4) * 3;
+	*r = new_size;
+
+	unsigned char *temp = (unsigned char *)ft_memalloc(new_size + 1);
+	temp[new_size] = '\0';
+	int i = 0;
 	while (in && *in && *in != '=')
 	{
-
-		ft_putchar_fd((giv(in[0]) << 2) | ((giv(in[1]) == -1 ? 0 : (giv(in[1])) >> 4)), fd);
+		temp[i] = (giv(in[0]) << 2) | ((giv(in[1]) == -1 ? 0 : (giv(in[1])) >> 4));
+		//ft_putchar_fd((giv(in[0]) << 2) | ((giv(in[1]) == -1 ? 0 : (giv(in[1])) >> 4)), fd);
 		if (in[2] != '=')
-			ft_putchar_fd(((giv(in[1]) & 15) << 4) | ((giv(in[2]) == -1 ? 0 : giv(in[2])) >> 2), fd);
+			temp[i + 1] = ((giv(in[1]) & 15) << 4) | ((giv(in[2]) == -1 ? 0 : giv(in[2])) >> 2);
+			//ft_putchar_fd(((giv(in[1]) & 15) << 4) | ((giv(in[2]) == -1 ? 0 : giv(in[2])) >> 2), fd);
 		if (in[3] != '=')
-			ft_putchar_fd(((giv(in[2]) & 3) << 6) | ((giv(in[3]) == -1 ? 0 : giv(in[3])) & 63), fd);
+			temp[i + 2] = ((giv(in[2]) & 3) << 6) | ((giv(in[3]) == -1 ? 0 : giv(in[3])) & 63);
+			//ft_putchar_fd(((giv(in[2]) & 3) << 6) | ((giv(in[3]) == -1 ? 0 : giv(in[3])) & 63), fd);
+		i = i + 3;
 		in += 4;
 	}
+	//printf("%zd, %d\n<%c>\n", *r, i, temp[new_size - 2]);
+	//write(1)
+	return (temp);
 }
 
 void	b64_encode(t_opt *opts, ssize_t r)
@@ -79,62 +92,80 @@ void	b64_encode(t_opt *opts, ssize_t r)
 	char	*b64;
 	int 	b;
 	int 	i;
+	int 	j;
 	unsigned char 	*in;
 
 	b = 0;
 	i = 0;
+	j = 0;
 
+	//printf("here2\n");
 	in = opts->in;
 	b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	opts->out = (unsigned char *)ft_memalloc(((r / 3) + 1) * 4 + 2);
+	opts->out = (unsigned char *)ft_memalloc(((r / 3) + 1) * 4 + 1 + (((r / 3) + 1) * 4 + 1) / 64 + 1);
 	//start = opts->out;
 	while (i < r)
 	{
-		ft_putchar_fd(b64[(int)(opts->in[i] >> 2)], opts->fd);
-		//*(opts->out) = b64[(int)(opts->in[i] >> 2)];
+		//ft_putchar_fd(b64[(int)(opts->in[i] >> 2)], opts->fd);
+		opts->out[j] = b64[(int)(opts->in[i] >> 2)];
 		//opts->out++;
-		i++;
+		i++; j++;
 		if (i < r)
 		{
-			ft_putchar_fd(b64[(int)(((in[i - 1] & 3) << 4) | ((in[i] & 240) >> 4))], opts->fd);
-			//*opts->out = b64[(int)(((opts->in[i - 1] & 3) << 4) | ((opts->in[i] & 240) >> 4))];
+			//ft_putchar_fd(b64[(int)(((in[i - 1] & 3) << 4) | ((in[i] & 240) >> 4))], opts->fd);
+			opts->out[j] = b64[(int)(((in[i - 1] & 3) << 4) | ((in[i] & 240) >> 4))];
 		}
 		else
-			//*opts->out = b64[(int)((opts->in[i - 1] & 3) << 4)];
-			ft_putchar_fd(b64[(int)((in[i - 1] & 3) << 4)], opts->fd);
-		i++;
+			opts->out[j] = b64[(int)((in[i - 1] & 3) << 4)];
+			//ft_putchar_fd(b64[(int)((in[i - 1] & 3) << 4)], opts->fd);
+		i++; j++;
 		//opts->out++;
 		if (i == r)
-			//*opts->out = b64[(int)(((opts->in[i - 1] & 15) << 2))];
-			ft_putchar_fd(b64[(int)(((in[i - 1] & 15) << 2))], opts->fd);
+			opts->out[j] = b64[(int)(((in[i - 1] & 15) << 2))];
+			//ft_putchar_fd(b64[(int)(((in[i - 1] & 15) << 2))], opts->fd);
 		else if (i < r)
-			//*opts->out = b64[(int)(((opts->in[i - 1] & 15) << 2) | ((opts->in[i] & 192) >> 6))];
-			ft_putchar_fd(b64[(int)(((in[i - 1] & 15) << 2) | ((in[i] & 192) >> 6))], opts->fd);
+			opts->out[j] = b64[(int)(((in[i - 1] & 15) << 2) | ((in[i] & 192) >> 6))];
+			//ft_putchar_fd(b64[(int)(((in[i - 1] & 15) << 2) | ((in[i] & 192) >> 6))], opts->fd);
 		else
 		{
-			//*opts->out = '=';
-			ft_putchar_fd('=', opts->fd);
+			opts->out[j] = '=';
+			//ft_putchar_fd('=', opts->fd);
 			b = 1;
 		}
+		j++;
 		//opts->out++;
 		if (i < r)
-			//*opts->out = b64[(int)(opts->in[i] & 63)];
-			ft_putchar_fd(b64[(int)(in[i] & 63)], opts->fd);
+			opts->out[j] = b64[(int)(opts->in[i] & 63)];
+			//ft_putchar_fd(b64[(int)(in[i] & 63)], opts->fd);
 		else
 		{
-			//*opts->out = '=';
-			ft_putchar_fd('=', opts->fd);
+			opts->out[j] = '=';
+			//ft_putchar_fd('=', opts->fd);
 			b = 1;
+		}
+		j++;
+		//printf("%d\n", j);
+		if (j && ((j + 1) % 65 == 0) && opts->entered_key)
+		{
+			//printf("%d\n", j);
+			opts->out[j] = '\n';
+			j++;
 		}
 		//opts->out++;
 		if (b)
 			break;
+		
 		i++;
 	}
-	ft_putchar_fd('\n', opts->fd);
+	//ft_putchar_fd('\n', opts->fd);
+	opts->out[j] = '\n';
+	opts->out[j + 1] = '\0';
+	//printf("here3\n");
+	//ft_putchar_fd('\n', opts->fd);
 	// *opts->out++ = '\n';
 	// *opts->out = '\0';
-	// ft_putstr_fd((char *)start, opts->fd);
+	write(opts->fd, opts->out, j + 1);
+	//ft_putstr_fd((const char *)opts->out, opts->fd);
 }
 
 void	put_open_err(char *name)
@@ -177,8 +208,10 @@ void	b64(t_opt *opts)
 			return ;
 		}
 	}
-	if (opts->d)
-		b64_decode((char *)opts->in, opts->fd);
+	if (opts->d) {
+		unsigned char *decoded = b64_decode(opts->in, &r);
+		write(opts->fd, decoded, r);
+	}
 	else
 		b64_encode(opts, r);
 	close(opts->fd);

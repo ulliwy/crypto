@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/02/16 15:49:39 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/12 15:36:06 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,10 +207,13 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	int 			i;
 	int 			j;
 	unsigned long	l[17];
-	unsigned long	r[17];
+	unsigned long	r[17];	
 
 	create_subkeys(opts.main_key, keys);
-	msg = (unsigned long *)in;
+	if (opts.a)
+		msg = (unsigned long *)b64_decode(in, &size);
+	else
+		msg = (unsigned long *)in;
 	i = 0;
 	while (i < size / 8)
 	{
@@ -282,6 +285,8 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0));
 		i++;
 	}
+	if (opts.a)
+		free(msg);
 }
 
 
@@ -401,6 +406,7 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	opts.in = in;
 	//write(fd, in, ft_strlen((char *)in));
 	//write(fd, "\n", 1);
+	//printf("here1\n");
 	if (opts.a)
 		b64_encode(&opts, (size / 8 + 1) * sizeof(temp));
 	else
@@ -454,6 +460,7 @@ void	des_ecb(t_opt *opts)
 	// input[5] = 0xAB;
 	// input[6] = 0xCD;
 	// input[7] = 0xEF;
+	
 	if (opts->d)
 		des_ecb_decode((unsigned char *)input, opts->fd, r, *opts);
 	else
