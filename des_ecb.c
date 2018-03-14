@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/12 15:36:06 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/14 14:34:11 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 
 int		put_key_err()
 {
-	ft_putstr("iv undefined\n");
+	ft_putstr("non-hex digit\n");
+	ft_putstr("invalid hex key value\n");
 	return (0);
 }
 
@@ -279,8 +280,13 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		//printf("2: %lX \n", temp & 3UL);
 		int val = temp & 255;
 		temp = reverse_bits(temp);
+		msg[i] = temp;
+		if (!i && opts.cmd->cbc)
+			temp = temp ^ opts.v;
+		if (i > 0 && opts.cmd->cbc)
+			temp = msg[i - 1] ^ temp;
 		//ft_putstr("temp:   ");
-		//print_bits(temp, 8);
+		print_bits(temp, 8);
 		//ft_putstr("\n");
 		write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0));
 		i++;
@@ -324,6 +330,10 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	{
 		//printf("1: %lX \n", msg[i]);
 		msg[i] = reverse_bits(msg[i]);
+		if (!i && opts.cmd->cbc)
+			msg[0] = msg[0] ^ opts.v; 
+		if (i > 0 && opts.cmd->cbc)
+			msg[i] = reverse_bits(msg[i - 1]) ^ msg[i];
 		// printf("2: %lX \n", msg[i]);
 		// printf("%d\n", i);
 		// ft_putstr("msg:    ");

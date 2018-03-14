@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/03/12 15:52:45 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/14 12:28:42 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct			s_cmd
 {
 	int					b64;
 	int 				ecb;
+	int 				cbc;
 }						t_cmd;
 
 typedef struct			s_opt
@@ -51,6 +52,7 @@ typedef struct			s_opt
 	int					e;
 	int					d;
 	int 				a;
+	unsigned long		v;
 	unsigned long		main_key;
 	char				*entered_key;
 	char				*input_file;
@@ -58,6 +60,7 @@ typedef struct			s_opt
 	unsigned char		*in;
 	unsigned char		*out;
 	int 				fd;
+	t_cmd				*cmd;
 }						t_opt;
 
 void					b64(t_opt *opts);
