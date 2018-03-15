@@ -217,8 +217,11 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	else
 		msg = (unsigned long *)in;
 	i = 0;
+	//int k;
+
 	while (i < size / 8)
 	{
+		//if (opts->cmd->ecb3 || )
 		cur = reverse_bits(msg[i]);
 		temp = 0;
 		j = 0;
@@ -318,35 +321,14 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	pad(in, size);
 	create_subkeys(opts.main_key, keys);
 	msg = (unsigned long *)in;
-	// printf("size: <%zd>\n", size);
-	// //printf("message: <%s>\n", (unsigned char *)msg);
-	// printf("message in hex: \n");
-	// for (i = 0; i < size; ++i) {
-	// 	if (i && i % 8 == 0)
-	// 		printf("\n");
-	// 	printf("%X", in[i]);
-	// }
-	// printf("\n____________\n");
-	// printf("\n");
-	// for (i = 0; i < size; ++i) {
-	// 	if (i && i % 8 == 0)
-	// 		printf(" ");
-	// 	printf("%c", in[i]);
-	// }
 	i = 0;
 	while (i < size / 8 + 1)
 	{
-		//printf("1: %lX \n", msg[i]);
 		msg[i] = reverse_bits(msg[i]);
 		if (!i && opts.cmd->cbc)
 			msg[0] = msg[0] ^ opts.v; 
 		if (i > 0 && opts.cmd->cbc)
 			msg[i] = reverse_bits(msg[i - 1]) ^ msg[i];
-		// printf("2: %lX \n", msg[i]);
-		// printf("%d\n", i);
-		// ft_putstr("msg:    ");
-		// print_bits(msg[i], 4);
-		// ft_putstr("\n");
 		temp = 0;
 		j = 0;
 		//initial permutation
@@ -357,44 +339,11 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		}
 		l[0] = temp >> 32;
 		r[0] = temp & ((1UL << 32) - 1UL);
-		//msg[i] = temp;
-		// printf("l[0]: ");
-		// fflush(stdout);
-		// print_bits(l[0], 4);
-		// ft_putstr("\n");
-		// printf("r[0]: ");
-		// fflush(stdout);
-		// print_bits(r[0], 4);
-		// ft_putstr("\n");
-		// printf("k[0]: ");
-		// fflush(stdout);
-		// print_bits(keys[0], 6);
-		// ft_putstr("\n\n");
-		// fflush(stdout);
 		j = 1;
 		while (j <= 16)
 		{
 			l[j] = r[j - 1];
-			// ft_putstr("ff: ");
-			// print_bits(ff(r[j - 1], keys[j - 1]), 4);
-			// ft_putstr("\n");
-			// ft_putstr("l : ");
-			// print_bits(l[j - 1], 4);
-			// ft_putstr("\n\n");
 			r[j] = l[j - 1] ^ ff(r[j - 1], keys[j - 1]);
-			// printf("l[%d]: ", j);
-			// fflush(stdout);
-			// print_bits(l[j], 4);
-			// ft_putstr("\n");
-			// printf("r[%d]: ", j);
-			// fflush(stdout);
-			// print_bits(r[j], 4);
-			// ft_putstr("\n");
-			// printf("k[%d]: ", j - 1);
-			// fflush(stdout);
-			// print_bits(keys[j-1], 6);
-			// ft_putstr("\n\n");
-			// fflush(stdout);
 			j++;
 			
 		}
@@ -407,34 +356,15 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 			temp = temp | (((1UL << (64 - g_ip_1[j])) & r[16]) ? 1UL << (63 - j) : 0);
 			j++;
 		}
-		// ft_putstr("temp: ");
-		// print_bits(temp, 8);
-		// ft_putstr("\n");
-		// ft_putstr("r16: ");
-		// print_bits(r[16], 4);
-		//ft_putstr("\n\n");
-		//msg[i] = temp;
 		msg[i] = reverse_bits(temp);
-		//write(fd, &temp, sizeof(temp));
-		//
-		//printf("res: %lX\n", msg[i]);
 		i++;
 	}
 	in = (unsigned char *)msg;
 	opts.in = in;
-	//write(fd, in, ft_strlen((char *)in));
-	//write(fd, "\n", 1);
-	//printf("here1\n");
 	if (opts.a)
 		b64_encode(&opts, (size / 8 + 1) * sizeof(temp));
 	else
 		write(fd, msg, (size / 8 + 1) * sizeof(temp));
-	// for (i = 0; i < size; ++i) {
-	// 	if (i && i % 8 == 0)
-	// 		printf(" ");
-	// 	printf("%X", in[i]);
-	// }
-	// printf("\n");
 }
 
 void	des_ecb(t_opt *opts)
@@ -479,6 +409,8 @@ void	des_ecb(t_opt *opts)
 	// input[6] = 0xCD;
 	// input[7] = 0xEF;
 	
+	if (opts->cmd->cbc3)
+		opts->cmd->cbc = 1;
 	if (opts->d)
 		des_ecb_decode((unsigned char *)input, opts->fd, r, *opts);
 	else
@@ -500,7 +432,7 @@ void	des_prep(t_opt opts)
 		allocated = 1;
 	}
 	if (!get_key(&opts))
-		return ;
+		return ; 
 	des_ecb(&opts);
 	if (allocated)
 		free(opts.entered_key);

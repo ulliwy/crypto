@@ -39,12 +39,13 @@ extern	unsigned char	*g_ss[];
 extern	unsigned char	g_p[];
 extern	unsigned char	g_ip_1[];
 
-
 typedef struct			s_cmd
 {
 	int					b64;
 	int 				ecb;
 	int 				cbc;
+	int 				ecb3;
+	int 				cbc3;
 }						t_cmd;
 
 typedef struct			s_opt
@@ -61,6 +62,7 @@ typedef struct			s_opt
 	unsigned char		*out;
 	int 				fd;
 	t_cmd				*cmd;
+	//unsigned long		keys[3];
 }						t_opt;
 
 void					b64(t_opt *opts);

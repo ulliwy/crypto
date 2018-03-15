@@ -39,6 +39,12 @@ int		parse_command(char **argv, t_cmd *cmd)
 		cmd->ecb = 1;
 	else if (!(ft_strcmp(argv[1], "des-cbc")))
 		cmd->cbc = 1;
+	else if (!(ft_strcmp(argv[1], "des3")))
+		cmd->ecb3 = 1;
+	else if (!(ft_strcmp(argv[1], "des3-ecb")))
+		cmd->ecb3 = 1;
+	else if (!(ft_strcmp(argv[1], "des3-cbc")))
+		cmd->cbc3 = 1;
 	else
 		return (0);
 	return (1);
@@ -138,6 +144,9 @@ void	opts_init(t_opt *opts, t_cmd *cmd)
 	opts->in = NULL;
 	opts->out = NULL;
 	opts->cmd = cmd;
+	//opts->keys[0] = 0;
+	//opts->keys[1] = 0;
+	//opts->keys[2] = 0;
 }
 
 void	cmd_init(t_cmd *cmd)
@@ -145,6 +154,8 @@ void	cmd_init(t_cmd *cmd)
 	cmd->b64 = 0;
 	cmd->ecb = 0;
 	cmd->cbc = 0;
+	cmd->ecb3 = 0;
+	cmd->cbc3 = 0;
 }
 
 void	print_opts(t_opt o)
@@ -178,7 +189,7 @@ int		main(int argc, char **argv)
 	//print_opts(opts);
 	if (cmd.b64)
 		b64(&opts);
-	else if (cmd.ecb || cmd.cbc)
+	else if (cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3)
 		des_prep(opts);
 	return (0);
 }
