@@ -205,6 +205,7 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	unsigned long	keys[16];
 	unsigned long	*msg;
 	unsigned long	temp;
+	unsigned long	cur;
 	int 			i;
 	int 			j;
 	unsigned long	l[17];
@@ -218,13 +219,13 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	i = 0;
 	while (i < size / 8)
 	{
-		msg[i] = reverse_bits(msg[i]);
+		cur = reverse_bits(msg[i]);
 		temp = 0;
 		j = 0;
 		while (j < 64)
 		{
-			temp = temp | ((msg[i] & 1UL) << (64 - g_ip_1[63 - j]));
-			msg[i] = msg[i] >> 1;
+			temp = temp | ((cur & 1UL) << (64 - g_ip_1[63 - j]));
+			cur = cur >> 1;
 			// //temp = temp | (((1UL << (64 - g_ip_1[j])) & r[16]) ? 1UL << (63 - j) : 0);
 			j++;
 		}
@@ -274,21 +275,28 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		// ft_putstr("\nl   :   ");
 		// print_bits(l[0], 4);
 		// ft_putstr("\n");
-		// ft_putstr("r   :   ");
-		// print_bits(r[0], 4);
+		// ft_putstr("t   :   ");
+		// print_bits(temp, 8);
 		// ft_putstr("\n");
 		//printf("2: %lX \n", temp & 3UL);
-		int val = temp & 255;
-		temp = reverse_bits(temp);
-		msg[i] = temp;
+		
+		// ft_putstr("v   :   ");
+		// print_bits(val, 8);
+		// ft_putstr("\n");
 		if (!i && opts.cmd->cbc)
 			temp = temp ^ opts.v;
 		if (i > 0 && opts.cmd->cbc)
-			temp = msg[i - 1] ^ temp;
-		//ft_putstr("temp:   ");
-		print_bits(temp, 8);
-		//ft_putstr("\n");
+			temp = temp ^ reverse_bits(msg[i - 1]);
+		int val = temp & 255;
+		temp = reverse_bits(temp);
+		//msg[i] = temp;
+		
+		// ft_putstr("temp:   ");
+		// print_bits(temp, 8);
+		// ft_putstr("\n");
 		write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0));
+		//write(fd, "\n", 1);
+		//printf("i = %d\n", (i == size / 8 - 1 ? val : 0));
 		i++;
 	}
 	if (opts.a)
