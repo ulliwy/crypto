@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des_ecb.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/14 14:34:11 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/16 16:52:11 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,42 @@ int		put_key_err()
 	ft_putstr("non-hex digit\n");
 	ft_putstr("invalid hex key value\n");
 	return (0);
+}
+
+int get_keys3(t_opt *opts)
+{
+	int		i;
+	int		k;
+	char	c;
+
+	i = 0;
+	k = 0;
+	//printf("%lu %lu %lu\n", opts->keys[0], opts->keys[1], opts->keys[2]);
+	while (opts->entered_key[i] && opts->entered_key[i] != '\n' && i < 48)
+	{
+		c = ft_tolower(opts->entered_key[i]);
+		if (!((c >= 'a' && c <= 'f') || (c >= '0' && c <= '9')))
+			return (put_key_err());
+		if (c >= 'a' && c <= 'f')
+			c = c - 87;
+		else
+			c = c - '0';
+		opts->keys[k] = opts->keys[k] * 16 + c;
+		i++;
+		if (i && (i % 16 == 0))
+			k++;
+	}
+	// if (i && (i % 16 == 0))
+	// 	k++;
+	while (i < 48)
+	{
+		opts->keys[k] = opts->keys[k] * 16;
+		i++;
+		if (i && (i % 16 == 0))
+			k++;
+	}
+	printf("%lu %lu %lu\n", opts->keys[0], opts->keys[1], opts->keys[2]);
+	return (1);
 }
 
 int		get_key(t_opt *opts)
@@ -392,22 +428,6 @@ void	des_ecb(t_opt *opts)
 		put_open_err(opts->output_file);
 		return ;
 	}
-	// input[7] = 0x05;
-	// input[6] = 0xB4;
-	// input[5] = 0x0A;
-	// input[4] = 0x0F;
-	// input[3] = 0x54;
-	// input[2] = 0x13;
-	// input[1] = 0xE8;
-	// input[0] = 0x85;
-	// input[0] = 0x01;
-	// input[1] = 0x23;
-	// input[2] = 0x45;
-	// input[3] = 0x67;
-	// input[4] = 0x89;
-	// input[5] = 0xAB;
-	// input[6] = 0xCD;
-	// input[7] = 0xEF;
 	
 	if (opts->cmd->cbc3)
 		opts->cmd->cbc = 1;
@@ -431,7 +451,12 @@ void	des_prep(t_opt opts)
 		read(1, opts.entered_key, 100);
 		allocated = 1;
 	}
-	if (!get_key(&opts))
+	if (opts.cmd->ecb3 || opts.cmd->cbc3)
+	{
+		if (!get_keys3(&opts))
+			return ;
+	}
+	else if(!get_key(&opts))
 		return ; 
 	des_ecb(&opts);
 	if (allocated)

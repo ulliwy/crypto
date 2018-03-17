@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/14 14:26:56 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/16 16:51:17 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ int		parse_opts(char **av, int i, t_opt *opts)
 			opts->a = 1;
 		else if (av[i][1] == 'v')
 		{
+			opts->iv = 1;
 			if (!get_iv(opts, av[i + 1]))
 				return (0);
 			i++;
@@ -136,6 +137,7 @@ void	opts_init(t_opt *opts, t_cmd *cmd)
 	opts->e = 1;
 	opts->d = 0;
 	opts->a = 0;
+	opts->iv = 0;
 	opts->v = 0;
 	opts->main_key = 0;
 	opts->entered_key = NULL;
@@ -144,9 +146,9 @@ void	opts_init(t_opt *opts, t_cmd *cmd)
 	opts->in = NULL;
 	opts->out = NULL;
 	opts->cmd = cmd;
-	//opts->keys[0] = 0;
-	//opts->keys[1] = 0;
-	//opts->keys[2] = 0;
+	opts->keys[0] = 0;
+	opts->keys[1] = 0;
+	opts->keys[2] = 0;
 }
 
 void	cmd_init(t_cmd *cmd)
@@ -175,9 +177,9 @@ int		main(int argc, char **argv)
 
 	opts_init(&opts, &cmd);
 	cmd_init(&cmd);
-	if (argc < 2)
+	if (argc < 2) 
 		return (err_usage());
-	if (!parse_command(argv, &cmd))
+	if (!parse_command(argv, &cmd)) 
 		return (err_usage_commands(argv[1]));
 	i = 2;
 	while (i < argc)
@@ -185,10 +187,16 @@ int		main(int argc, char **argv)
 		if (!(i = parse_opts(argv, i, &opts)))
 			return (err_usage());
 	}
+
 	//printf("%lu\n", opts.v);
 	//print_opts(opts);
 	if (cmd.b64)
 		b64(&opts);
+	else if ((cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3) && (!opts.iv))
+	{
+		ft_putstr("iv undefined\n");
+		return (0);
+	}
 	else if (cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3)
 		des_prep(opts);
 	return (0);

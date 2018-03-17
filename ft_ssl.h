@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ssl.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/03/14 12:28:42 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/16 16:44:47 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct			s_opt
 	int					e;
 	int					d;
 	int 				a;
+	int 				iv;
 	unsigned long		v;
 	unsigned long		main_key;
 	char				*entered_key;
@@ -62,7 +63,7 @@ typedef struct			s_opt
 	unsigned char		*out;
 	int 				fd;
 	t_cmd				*cmd;
-	//unsigned long		keys[3];
+	unsigned long		keys[3];
 }						t_opt;
 
 void					b64(t_opt *opts);
