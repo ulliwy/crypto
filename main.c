@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/16 16:51:17 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/19 15:55:47 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ int		main(int argc, char **argv)
 	//print_opts(opts);
 	if (cmd.b64)
 		b64(&opts);
-	else if ((cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3) && (!opts.iv))
+	else if ((cmd.cbc || cmd.cbc3) && (!opts.iv))
 	{
 		ft_putstr("iv undefined\n");
 		return (0);

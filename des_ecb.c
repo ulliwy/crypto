@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/19 15:38:46 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/19 15:56:43 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int get_keys3(t_opt *opts)
 		if (i && (i % 16 == 0))
 			k++;
 	}
-	printf("%lu %lu %lu\n", opts->keys[0], opts->keys[1], opts->keys[2]);
+	//printf("%lu %lu %lu\n", opts->keys[0], opts->keys[1], opts->keys[2]);
 	return (1);
 }
 
@@ -300,7 +300,7 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		free(msg);
 }
 
-void	des_encryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
+unsigned long	des_encryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
 {
 	unsigned long	temp;
 	int 			j;
@@ -340,25 +340,39 @@ void	des_encryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[1
 		j++;
 	}
 	(*msg)[i] = reverse_bits(temp);
+	return ((*msg)[i]);
 }
 
 void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 {
-	unsigned long	keys[16];
+	unsigned long	keys[3][16];
 	unsigned long	*msg;
-	// unsigned long	temp;
+	unsigned long	temp;
 	int 			i;
 	// int 			j;
 	// unsigned long	l[17];
 	// unsigned long	r[17];
 
 	pad(in, size);
-	create_subkeys(opts.main_key, keys);
+	if (opts.cmd->ecb3 || opts.cmd->cbc3)
+	{
+		create_subkeys(opts.keys[0], keys[0]);
+		create_subkeys(opts.keys[1], keys[1]);
+		create_subkeys(opts.keys[2], keys[2]);
+	} else
+		create_subkeys(opts.main_key, keys[0]);
 	msg = (unsigned long *)in;
 	i = 0;
 	while (i < size / 8 + 1)
 	{
-		des_encryption(&msg, i, opts, keys);
+		des_encryption(&msg, i, opts, keys[0]);
+		if (opts.cmd->ecb3 || opts.cmd->cbc3)
+		{
+			temp = des_dencryption(&msg, i, opts, keys[1]);
+			temp = reverse_bits(temp);
+			msg[i] = temp;
+			msg[i] = des_encryption(&msg, i, opts, keys[2]);
+		}
 		i++;
 	}
 	in = (unsigned char *)msg;
