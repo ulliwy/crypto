@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/19 15:56:43 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/19 16:24:12 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,55 +179,7 @@ unsigned long	ff(unsigned long r, unsigned long k)
 	return (f);
 }
 
-void	des_decryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16], ssize_t size, int fd)
-{
-	unsigned long	cur;
-	unsigned long	temp;
-	int j;
-	unsigned long	l[17];
-	unsigned long	r[17];
-
-	cur = reverse_bits(*msg[i]);
-	temp = 0;
-	j = 0;
-	while (j < 64)
-	{
-		temp = temp | ((cur & 1UL) << (64 - g_ip_1[63 - j]));
-		cur = cur >> 1;
-		j++;
-	}
-	
-	r[16] = temp >> 32;
-	l[16] = temp & ((1UL << 32) - 1UL);
-	j = 16;
-	while (j >= 1)
-	{
-		l[j - 1] = r[j] ^ ff(l[j], keys[j - 1]);
-		r[j - 1] = l[j];
-		j--;
-	}
-	l[0] = (l[0] << 32) | r[0];
-	j = 0;
-	temp = 0;
-	while (j < 64)
-	{
-		temp = temp | ((l[0] & 1UL) << (64 - g_ip[63 - j]));
-		l[0] = l[0] >> 1;
-		j++;
-	}
-	if (!i && opts.cmd->cbc)
-		temp = temp ^ opts.v;
-	if (i > 0 && opts.cmd->cbc)
-		temp = temp ^ reverse_bits(*msg[i - 1]);
-	int val = temp & 255;
-	temp = reverse_bits(temp);
-	*msg[i] = temp;
-	printf("%lu\n", size);
-	printf("%d\n", val);
-	write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0) + 1);
-}
-
-unsigned long	des_dencryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
+unsigned long	des_decryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
 {
 	unsigned long	temp;
 	unsigned long	cur;
@@ -274,32 +226,6 @@ unsigned long	des_dencryption(unsigned long **msg, int i, t_opt opts, unsigned l
 	return (temp);
 }
 
-void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
-{
-	unsigned long	keys[16];
-	unsigned long	*msg;
-	int 			i;
-	unsigned long temp;
-
-	create_subkeys(opts.main_key, keys);
-	if (opts.a)
-		msg = (unsigned long *)b64_decode(in, &size);
-	else
-		msg = (unsigned long *)in;
-	i = 0;
-
-	while (i < size / 8)
-	{
-		temp = des_dencryption(&msg, i, opts, keys);
-		int val = temp & 255;
-		temp = reverse_bits(temp);
-		write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0));
-		i++;
-	}
-	if (opts.a)
-		free(msg);
-}
-
 unsigned long	des_encryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
 {
 	unsigned long	temp;
@@ -343,6 +269,75 @@ unsigned long	des_encryption(unsigned long **msg, int i, t_opt opts, unsigned lo
 	return ((*msg)[i]);
 }
 
+void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
+{
+	unsigned long	keys[3][16];
+	unsigned long	*msg;
+	int 			i;
+	unsigned long temp;
+
+	if (opts.cmd->ecb3 || opts.cmd->cbc3)
+	{
+		create_subkeys(opts.keys[0], keys[0]);
+		create_subkeys(opts.keys[1], keys[1]);
+		create_subkeys(opts.keys[2], keys[2]);
+	} else
+		create_subkeys(opts.main_key, keys[0]);
+	if (opts.a)
+		msg = (unsigned long *)b64_decode(in, &size);
+	else
+		msg = (unsigned long *)in;
+	i = 0;
+
+	int val;
+
+	while (i < size / 8)
+	{
+		if (opts.cmd->ecb3 || opts.cmd->cbc3)
+		{
+			// des_encryption(&msg, i, opts, keys[0]);
+			// if (opts.cmd->ecb3 || opts.cmd->cbc3)
+			// {
+			// 	temp = des_decryption(&msg, i, opts, keys[1]);
+			// 	temp = reverse_bits(temp);
+			// 	msg[i] = temp;
+			// 	msg[i] = des_encryption(&msg, i, opts, keys[2]);
+			// }
+
+			temp = des_decryption(&msg, i, opts, keys[2]);
+			temp = reverse_bits(temp);
+			msg[i] = temp;
+		 	des_encryption(&msg, i, opts, keys[1]);
+		 	temp = des_decryption(&msg, i, opts, keys[0]);
+		 	val = temp & 255;
+			temp = reverse_bits(temp);
+		}
+		else
+		{
+			temp = des_decryption(&msg, i, opts, keys[0]);
+			val = temp & 255;
+			temp = reverse_bits(temp);
+		}
+		
+		
+
+		write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0));
+
+		// des_encryption(&msg, i, opts, keys[0]);
+		// if (opts.cmd->ecb3 || opts.cmd->cbc3)
+		// {
+		// 	temp = des_decryption(&msg, i, opts, keys[1]);
+		// 	temp = reverse_bits(temp);
+		// 	msg[i] = temp;
+		// 	msg[i] = des_encryption(&msg, i, opts, keys[2]);
+		// }
+		i++;
+	}
+	if (opts.a)
+		free(msg);
+}
+
+
 void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 {
 	unsigned long	keys[3][16];
@@ -368,7 +363,7 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		des_encryption(&msg, i, opts, keys[0]);
 		if (opts.cmd->ecb3 || opts.cmd->cbc3)
 		{
-			temp = des_dencryption(&msg, i, opts, keys[1]);
+			temp = des_decryption(&msg, i, opts, keys[1]);
 			temp = reverse_bits(temp);
 			msg[i] = temp;
 			msg[i] = des_encryption(&msg, i, opts, keys[2]);
