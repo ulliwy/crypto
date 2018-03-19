@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/16 16:52:11 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/19 15:38:46 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,29 +114,13 @@ void	permut_c0d0(unsigned long *c0, unsigned long *d0, unsigned long	keys[16])
 	i = 0;
 	while (i < 16)
 	{
-		// ft_putstr("c");
-		// ft_putnbr(i + 1);
-		// ft_putstr(" -> ");
 		cr = *c0 >> (28 - g_shifts[i]);
 		cl = *c0 << g_shifts[i];
 		*c0 = (cl | cr) & ((1UL << 56) - (1UL << 28));
-		// print_bits(*c0, 7);
-		// ft_putstr("\n");
-
-		// ft_putstr("d");
-		// ft_putnbr(i + 1);
-		// ft_putstr(" -> ");
 		dr = *d0 >> (28 - g_shifts[i]);
 		dl = *d0 << g_shifts[i];
 		*d0 = (dl | dr) & ((1UL << 28) - 1UL);
-		// print_bits(*d0, 7);
-		// ft_putstr("\n");
 		keys[i] = permut_pc2(*c0, *d0);
-		// ft_putstr("key");
-		// ft_putnbr(i + 1);
-		// ft_putstr(" -> ");
-		// print_bits(keys[i], 6);
-		// ft_putstr("\n\n");
 		i++;
 	}
 }
@@ -157,16 +141,6 @@ void	create_subkeys(unsigned long k, unsigned long	keys[16])
 	}
 	c0 = ((1UL << 56) - (1UL << 28)) & k_plus;
 	d0 = ((1UL << 28) - 1UL) & k_plus;
-
-	// ft_putstr("k_plus: ");
-	// print_bits(k_plus, 7);
-	// ft_putstr("\n");
-	// ft_putstr("c0:     ");
-	// print_bits(c0, 7);
-	// ft_putstr("\n");
-	// ft_putstr("d0:     ");
-	// print_bits(d0, 7);
-	// ft_putstr("\n");
 	permut_c0d0(&c0, &d0, keys);
 }
 
@@ -184,17 +158,7 @@ unsigned long	ff(unsigned long r, unsigned long k)
 		er = er | ((1UL << (32 - g_ebit[i])) & r ? 1UL << (47 - i) : 0);
 		i++;
 	}
-	// ft_putstr("r:   ");
-	// print_bits(r, 4);
-	// ft_putstr("\n");
-	// ft_putstr("er:  ");
-	// print_bits(er, 6);
-	// ft_putstr("\n");
 	er = er ^ k;
-	// ft_putstr("xor: ");
-	// print_bits(er, 6);
-	// ft_putstr("\n");
-	// ft_putstr("\n");
 	i = 0;
 	unsigned long p4 = 0;
 	unsigned long f = 0;
@@ -204,20 +168,6 @@ unsigned long	ff(unsigned long r, unsigned long k)
 		unsigned long p2 = (1 & p1) | ((p1 >> 4) & 2);
 		unsigned long p3 = (p1 >> 1) & 15;
 		p4 = (p4 << 4) | (g_ss[i][p2 * 16 + p3]);
-		// printf("row: %lu, col: %lu, val: %lu\n", p2, p3, (p2) * 16 + p3);
-		// ft_putstr("f: ");
-		// print_bits(f, 4);
-		// ft_putstr("\n");
-		// ft_putstr("row: ");
-		// print_bits(p2, 6);
-		// ft_putstr("\n");
-		// ft_putstr("col: ");
-		// print_bits(p3, 6);
-		// ft_putstr("\n");
-		// ft_putstr("val: ");
-		// print_bits(p4, 4);
-		// ft_putstr("\n");
-		// ft_putstr("\n");
 		i++;
 	}
 	int j = 0;
@@ -225,27 +175,111 @@ unsigned long	ff(unsigned long r, unsigned long k)
 	{
 		f = (f << 1UL) | ((1UL << (32 - g_p[j])) & p4 ? 1UL : 0);
 		j++;
-		// ft_putstr("f: ");
-		// print_bits(f, 4);
-		// ft_putstr("\n");
 	}
-	//print_bits(f, 4);
-	//ft_putstr("\n\n");
-
-
 	return (f);
+}
+
+void	des_decryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16], ssize_t size, int fd)
+{
+	unsigned long	cur;
+	unsigned long	temp;
+	int j;
+	unsigned long	l[17];
+	unsigned long	r[17];
+
+	cur = reverse_bits(*msg[i]);
+	temp = 0;
+	j = 0;
+	while (j < 64)
+	{
+		temp = temp | ((cur & 1UL) << (64 - g_ip_1[63 - j]));
+		cur = cur >> 1;
+		j++;
+	}
+	
+	r[16] = temp >> 32;
+	l[16] = temp & ((1UL << 32) - 1UL);
+	j = 16;
+	while (j >= 1)
+	{
+		l[j - 1] = r[j] ^ ff(l[j], keys[j - 1]);
+		r[j - 1] = l[j];
+		j--;
+	}
+	l[0] = (l[0] << 32) | r[0];
+	j = 0;
+	temp = 0;
+	while (j < 64)
+	{
+		temp = temp | ((l[0] & 1UL) << (64 - g_ip[63 - j]));
+		l[0] = l[0] >> 1;
+		j++;
+	}
+	if (!i && opts.cmd->cbc)
+		temp = temp ^ opts.v;
+	if (i > 0 && opts.cmd->cbc)
+		temp = temp ^ reverse_bits(*msg[i - 1]);
+	int val = temp & 255;
+	temp = reverse_bits(temp);
+	*msg[i] = temp;
+	printf("%lu\n", size);
+	printf("%d\n", val);
+	write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0) + 1);
+}
+
+unsigned long	des_dencryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
+{
+	unsigned long	temp;
+	unsigned long	cur;
+	int 			j;
+	unsigned long	l[17];
+	unsigned long	r[17];
+
+	cur = reverse_bits((*msg)[i]);
+	temp = 0;
+	j = 0;
+	while (j < 64)
+	{
+		temp = temp | ((cur & 1UL) << (64 - g_ip_1[63 - j]));
+		cur = cur >> 1;
+		j++;
+	}
+	
+	r[16] = temp >> 32;
+	l[16] = temp & ((1UL << 32) - 1UL);
+	j = 16;
+	while (j >= 1)
+	{
+		l[j - 1] = r[j] ^ ff(l[j], keys[j - 1]);
+		r[j - 1] = l[j];
+		j--;
+	}
+	l[0] = (l[0] << 32) | r[0];
+	j = 0;
+	temp = 0;
+	while (j < 64)
+	{
+		temp = temp | ((l[0] & 1UL) << (64 - g_ip[63 - j]));
+		l[0] = l[0] >> 1;
+		j++;
+	}
+	if (!i && opts.cmd->cbc)
+		temp = temp ^ opts.v;
+	if (i > 0 && opts.cmd->cbc)
+		temp = temp ^ reverse_bits((*msg)[i - 1]);
+	//printf("val: %d\n", val);
+	//temp = reverse_bits(temp);
+	//(*msg)[i] = temp;
+	//write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0));
+	return (temp);
 }
 
 void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 {
 	unsigned long	keys[16];
 	unsigned long	*msg;
-	unsigned long	temp;
-	unsigned long	cur;
 	int 			i;
-	int 			j;
-	unsigned long	l[17];
-	unsigned long	r[17];	
+	unsigned long temp;
 
 	create_subkeys(opts.main_key, keys);
 	if (opts.a)
@@ -253,106 +287,70 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	else
 		msg = (unsigned long *)in;
 	i = 0;
-	//int k;
 
 	while (i < size / 8)
 	{
-		//if (opts->cmd->ecb3 || )
-		cur = reverse_bits(msg[i]);
-		temp = 0;
-		j = 0;
-		while (j < 64)
-		{
-			temp = temp | ((cur & 1UL) << (64 - g_ip_1[63 - j]));
-			cur = cur >> 1;
-			// //temp = temp | (((1UL << (64 - g_ip_1[j])) & r[16]) ? 1UL << (63 - j) : 0);
-			j++;
-		}
-		
-		r[16] = temp >> 32;
-		l[16] = temp & ((1UL << 32) - 1UL);
-
-		// ft_putstr("l16 : ");
-		// print_bits(l[16], 4);
-		// ft_putstr("\n");
-		// ft_putstr("r16 : ");
-		// print_bits(r[16], 4);
-		// ft_putstr("\n\n");
-		j = 16;
-		while (j >= 1)
-		{
-			// printf("l[%d]: ", j);
-			// fflush(stdout);
-			// print_bits(l[j], 4);
-			// ft_putstr("\n");
-			// printf("r[%d]: ", j);
-			// fflush(stdout);
-			// print_bits(r[j], 4);
-			// ft_putstr("\n");
-			// printf("k[%d]: ", j - 1);
-			// fflush(stdout);
-			// print_bits(keys[j-1], 6);
-			// ft_putstr("\n\n");
-			// fflush(stdout);
-			l[j - 1] = r[j] ^ ff(l[j], keys[j - 1]);
-			r[j - 1] = l[j];
-			j--;
-		}
-		l[0] = (l[0] << 32) | r[0];
-		j = 0;
-		temp = 0;
-		while (j < 64)
-		{
-			temp = temp | ((l[0] & 1UL) << (64 - g_ip[63 - j]));
-			l[0] = l[0] >> 1;
-			//temp = temp | (((1UL << (64 - g_ip[j])) & msg[i]) ? 1UL << (63 - j) : 0);
-			j++;
-		}
-		// ft_putstr("temp:   ");
-		// print_bits(temp, 8);
-		// ft_putstr("\n");
-		// ft_putstr("\nl   :   ");
-		// print_bits(l[0], 4);
-		// ft_putstr("\n");
-		// ft_putstr("t   :   ");
-		// print_bits(temp, 8);
-		// ft_putstr("\n");
-		//printf("2: %lX \n", temp & 3UL);
-		
-		// ft_putstr("v   :   ");
-		// print_bits(val, 8);
-		// ft_putstr("\n");
-		if (!i && opts.cmd->cbc)
-			temp = temp ^ opts.v;
-		if (i > 0 && opts.cmd->cbc)
-			temp = temp ^ reverse_bits(msg[i - 1]);
+		temp = des_dencryption(&msg, i, opts, keys);
 		int val = temp & 255;
 		temp = reverse_bits(temp);
-		//msg[i] = temp;
-		
-		// ft_putstr("temp:   ");
-		// print_bits(temp, 8);
-		// ft_putstr("\n");
 		write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0));
-		//write(fd, "\n", 1);
-		//printf("i = %d\n", (i == size / 8 - 1 ? val : 0));
 		i++;
 	}
 	if (opts.a)
 		free(msg);
 }
 
+void	des_encryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
+{
+	unsigned long	temp;
+	int 			j;
+	unsigned long	l[17];
+	unsigned long	r[17];
 
+	(*msg)[i] = reverse_bits((*msg)[i]);
+	if (!i && opts.cmd->cbc)
+		(*msg)[0] = (*msg)[0] ^ opts.v; 
+	if (i > 0 && opts.cmd->cbc)
+		(*msg)[i] = reverse_bits((*msg)[i - 1]) ^ (*msg)[i];
+	temp = 0;
+	j = 0;
+	//initial permutation
+	while (j < 64)
+	{
+		temp = temp | (((1UL << (64 - g_ip[j])) & (*msg)[i]) ? 1UL << (63 - j) : 0);
+		j++;
+	}
+	l[0] = temp >> 32;
+	r[0] = temp & ((1UL << 32) - 1UL);
+	j = 1;
+	while (j <= 16)
+	{
+		l[j] = r[j - 1];
+		r[j] = l[j - 1] ^ ff(r[j - 1], keys[j - 1]);
+		j++;
+		
+	}
+
+	r[16] = (r[16] << 32) | l[16];
+	j = 0;
+	temp = 0;
+	while (j < 64)
+	{
+		temp = temp | (((1UL << (64 - g_ip_1[j])) & r[16]) ? 1UL << (63 - j) : 0);
+		j++;
+	}
+	(*msg)[i] = reverse_bits(temp);
+}
 
 void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 {
 	unsigned long	keys[16];
 	unsigned long	*msg;
-	unsigned long	temp;
+	// unsigned long	temp;
 	int 			i;
-	int 			j;
-	unsigned long	l[17];
-	unsigned long	r[17];
+	// int 			j;
+	// unsigned long	l[17];
+	// unsigned long	r[17];
 
 	pad(in, size);
 	create_subkeys(opts.main_key, keys);
@@ -360,47 +358,15 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	i = 0;
 	while (i < size / 8 + 1)
 	{
-		msg[i] = reverse_bits(msg[i]);
-		if (!i && opts.cmd->cbc)
-			msg[0] = msg[0] ^ opts.v; 
-		if (i > 0 && opts.cmd->cbc)
-			msg[i] = reverse_bits(msg[i - 1]) ^ msg[i];
-		temp = 0;
-		j = 0;
-		//initial permutation
-		while (j < 64)
-		{
-			temp = temp | (((1UL << (64 - g_ip[j])) & msg[i]) ? 1UL << (63 - j) : 0);
-			j++;
-		}
-		l[0] = temp >> 32;
-		r[0] = temp & ((1UL << 32) - 1UL);
-		j = 1;
-		while (j <= 16)
-		{
-			l[j] = r[j - 1];
-			r[j] = l[j - 1] ^ ff(r[j - 1], keys[j - 1]);
-			j++;
-			
-		}
-
-		r[16] = (r[16] << 32) | l[16];
-		j = 0;
-		temp = 0;
-		while (j < 64)
-		{
-			temp = temp | (((1UL << (64 - g_ip_1[j])) & r[16]) ? 1UL << (63 - j) : 0);
-			j++;
-		}
-		msg[i] = reverse_bits(temp);
+		des_encryption(&msg, i, opts, keys);
 		i++;
 	}
 	in = (unsigned char *)msg;
 	opts.in = in;
 	if (opts.a)
-		b64_encode(&opts, (size / 8 + 1) * sizeof(temp));
+		b64_encode(&opts, (size / 8 + 1) * sizeof(unsigned long));
 	else
-		write(fd, msg, (size / 8 + 1) * sizeof(temp));
+		write(fd, msg, (size / 8 + 1) * sizeof(unsigned long));
 }
 
 void	des_ecb(t_opt *opts)
