@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/03/20 13:51:25 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/20 15:24:53 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,11 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
-
 # include <stdio.h>
 
 # define BUFF_SIZE	512
 
-extern 	unsigned char	g_pc1[];
+extern	unsigned char	g_pc1[];
 extern	unsigned char	g_pc2[];
 extern	unsigned char	g_shifts[];
 extern	unsigned char	g_ip[];
@@ -42,25 +41,24 @@ extern	unsigned char	g_ip_1[];
 typedef struct			s_cmd
 {
 	int					b64;
-	int 				ecb;
-	int 				cbc;
-	int 				ecb3;
-	int 				cbc3;
+	int					ecb;
+	int					cbc;
+	int					ecb3;
+	int					cbc3;
 }						t_cmd;
 
 typedef struct			s_opt
 {
 	int					d;
-	int 				a;
-	int 				iv;
+	int					a;
+	int					iv;
 	unsigned long		v;
-	//unsigned long		main_key;
 	char				*entered_key;
 	char				*input_file;
 	char				*output_file;
 	unsigned char		*in;
 	unsigned char		*out;
-	int 				fd;
+	int					fd;
 	t_cmd				*cmd;
 	unsigned long		keys[3];
 }						t_opt;

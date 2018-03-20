@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 14:07:40 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/02/08 14:44:35 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/20 15:28:31 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*get_from_fd(int fd, ssize_t *r)
 	char		*input;
 	char		*new;
 	ssize_t		rd;
-	int 		offset;
+	int			offset;
 
 	if (!(input = (char *)ft_memalloc(BUFF_SIZE + 9)))
 		return (NULL);
