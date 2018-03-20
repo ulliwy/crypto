@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des_ecb.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/19 16:24:12 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/20 13:53:16 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,12 @@ int		get_key(t_opt *opts)
 			c = c - 87;
 		else
 			c = c - '0';
-		opts->main_key = opts->main_key * 16 + c;
+		opts->keys[0] = opts->keys[0] * 16 + c;
 		i++;
 	}
 	while (i < 16)
 	{
-		opts->main_key = opts->main_key * 16;
+		opts->keys[0] = opts->keys[0] * 16;
 		i++;
 	}
 	//printf("%lX\n", opts->main_key);
@@ -275,14 +275,16 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	unsigned long	*msg;
 	int 			i;
 	unsigned long temp;
+	unsigned long	*res;
 
+	res = (unsigned long *)malloc(size);
 	if (opts.cmd->ecb3 || opts.cmd->cbc3)
 	{
 		create_subkeys(opts.keys[0], keys[0]);
 		create_subkeys(opts.keys[1], keys[1]);
 		create_subkeys(opts.keys[2], keys[2]);
 	} else
-		create_subkeys(opts.main_key, keys[0]);
+		create_subkeys(opts.keys[0], keys[0]);
 	if (opts.a)
 		msg = (unsigned long *)b64_decode(in, &size);
 	else
@@ -291,6 +293,7 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 
 	int val;
 
+	//printf("%lu\n", size);
 	while (i < size / 8)
 	{
 		if (opts.cmd->ecb3 || opts.cmd->cbc3)
@@ -303,36 +306,33 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 			// 	msg[i] = temp;
 			// 	msg[i] = des_encryption(&msg, i, opts, keys[2]);
 			// }
-
 			temp = des_decryption(&msg, i, opts, keys[2]);
 			temp = reverse_bits(temp);
 			msg[i] = temp;
 		 	des_encryption(&msg, i, opts, keys[1]);
-		 	temp = des_decryption(&msg, i, opts, keys[0]);
-		 	val = temp & 255;
-			temp = reverse_bits(temp);
+		 	// temp = des_decryption(&msg, i, opts, keys[0]);
+		 // 	val = temp & 255;
+			// temp = reverse_bits(temp);
 		}
-		else
-		{
-			temp = des_decryption(&msg, i, opts, keys[0]);
-			val = temp & 255;
-			temp = reverse_bits(temp);
-		}
-		
-		
-
-		write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0));
-
-		// des_encryption(&msg, i, opts, keys[0]);
-		// if (opts.cmd->ecb3 || opts.cmd->cbc3)
+		// else
 		// {
-		// 	temp = des_decryption(&msg, i, opts, keys[1]);
-		// 	temp = reverse_bits(temp);
-		// 	msg[i] = temp;
-		// 	msg[i] = des_encryption(&msg, i, opts, keys[2]);
-		// }
+		// 	if (i % 1000 == 0)
+		// 		printf("here i %d\n", i);
+		// 	//temp = des_decryption(&msg, i, opts, keys[0]);
+		// 	// val = temp & 255;
+		// 	// temp = reverse_bits(temp);
+		//}
+		temp = des_decryption(&msg, i, opts, keys[0]);
+		val = temp & 255;
+		temp = reverse_bits(temp);
+		res[i] = temp;
+		//printf("%d\n", i);
+		//write(fd, &(msg[i]), sizeof(temp) - (i == size / 8 - 1 ? val : 0));
 		i++;
 	}
+	//printf("%d\n", val);
+	write(fd, res, sizeof(temp) * i - (i - 1 == size / 8 - 1 ? val : 0));
+	free(res);
 	if (opts.a)
 		free(msg);
 }
@@ -355,7 +355,7 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		create_subkeys(opts.keys[1], keys[1]);
 		create_subkeys(opts.keys[2], keys[2]);
 	} else
-		create_subkeys(opts.main_key, keys[0]);
+		create_subkeys(opts.keys[0], keys[0]);
 	msg = (unsigned long *)in;
 	i = 0;
 	while (i < size / 8 + 1)

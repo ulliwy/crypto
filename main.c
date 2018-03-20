@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/19 15:55:47 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/20 13:52:05 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl.h"
-#include <stdio.h>
 
 int		err_usage()
 {
@@ -25,7 +24,7 @@ int		err_usage_commands(char *cmd)
 	ft_putstr(cmd);
 	ft_putstr("' is an invalid command.\n\n");
 	ft_putstr("Standard commands:\n\nMessage Digest commands:\n\n");
-	ft_putstr("Cipher commands:\nbase64\ndes\ndes-ecb\ndec-cbc\n");
+	ft_putstr("Cipher commands:\nbase64\ndes\ndes-ecb\ndec-cbc\ndes3\ndes3-ecb\ndes3-cbc\n");
 	return (0);
 }
 
@@ -59,16 +58,10 @@ int 	put_iv_err()
 
 int 	get_iv(t_opt *opts, char *str)
 {
-	//int		len;
 	int		i;
 	char	c;
 
 	i = 0;
-	//len = ft_strlen(opts->entered_key);
-
-	// if (opts->entered_key[len - 1] == '\n')
-	// 	len--;
-	//while (i < len && i < 16)
 	while (*str && i < 16)
 	{
 		c = ft_tolower(*str);
@@ -96,9 +89,9 @@ int		parse_opts(char **av, int i, t_opt *opts)
 {
 	if (av[i][0] == '-' && !av[i][2])
 	{
-		if (av[i][1] == 'e')
-			opts->e = 1;
-		else if (av[i][1] == 'd')
+		// if (av[i][1] == 'e')
+		// 	opts->e = 1;
+		if (av[i][1] == 'd')
 			opts->d = 1;
 		else if (av[i][1] == 'a')
 			opts->a = 1;
@@ -134,12 +127,11 @@ int		parse_opts(char **av, int i, t_opt *opts)
 
 void	opts_init(t_opt *opts, t_cmd *cmd)
 {
-	opts->e = 1;
 	opts->d = 0;
 	opts->a = 0;
 	opts->iv = 0;
 	opts->v = 0;
-	opts->main_key = 0;
+	//opts->main_key = 0;
 	opts->entered_key = NULL;
 	opts->input_file = NULL;
 	opts->output_file = NULL;
@@ -158,15 +150,6 @@ void	cmd_init(t_cmd *cmd)
 	cmd->cbc = 0;
 	cmd->ecb3 = 0;
 	cmd->cbc3 = 0;
-}
-
-void	print_opts(t_opt o)
-{
-	printf("e: %d\n", o.e);
-	printf("d: %d\n", o.d);
-	printf("key: <%s>\n", o.entered_key);
-	printf("input_file: <%s>\n", o.input_file);
-	printf("output_file: <%s>\n", o.output_file);
 }
 
 int		main(int argc, char **argv)

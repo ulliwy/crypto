@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ssl.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/03/16 16:44:47 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/20 13:51:25 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,11 @@ typedef struct			s_cmd
 
 typedef struct			s_opt
 {
-	int					e;
 	int					d;
 	int 				a;
 	int 				iv;
 	unsigned long		v;
-	unsigned long		main_key;
+	//unsigned long		main_key;
 	char				*entered_key;
 	char				*input_file;
 	char				*output_file;
