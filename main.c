@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/20 16:34:13 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/20 20:13:35 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,5 +191,8 @@ int		main(int argc, char **argv)
 		return (put_iv_err(2));
 	else if (cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3)
 		des_prep(opts);
+
+	//printf("Run...\nsudo leaks %u\n...in the next %u seconds\n", getpid(), 100);
+  	//sleep(100);
 	return (0);
 }

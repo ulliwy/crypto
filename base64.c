@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   base64.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 11:23:32 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/20 16:43:12 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/20 19:23:14 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,15 +103,15 @@ void	b64_encode(t_opt *opts, ssize_t r)
 	opts->out = (unsigned char *)ft_memalloc(((r / 3) + 1) * 4 + 1 + (((r / 3) + 1) * 4 + 1) / 64 + 1);
 	while (i < r)
 	{
-		opts->out[j] = b64[(int)(opts->in[i] >> 2)];
-		i++;
-		j++;
+		opts->out[j++] = b64[(int)(opts->in[i++] >> 2)];
+		//i++;
+		//j++;
 		if (i < r)
-			opts->out[j] = b64[(int)(((in[i - 1] & 3) << 4) | ((in[i] & 240) >> 4))];
+			opts->out[j++] = b64[(int)(((in[i - 1] & 3) << 4) | ((in[i] & 240) >> 4))];
 		else
-			opts->out[j] = b64[(int)((in[i - 1] & 3) << 4)];
+			opts->out[j++] = b64[(int)((in[i - 1] & 3) << 4)];
 		i++;
-		j++;
+		//j++;
 		if (i == r)
 			opts->out[j] = b64[(int)(((in[i - 1] & 15) << 2))];
 		else if (i < r)

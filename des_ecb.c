@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des_ecb.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/20 13:53:16 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:51:22 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,16 @@ void	create_subkeys(unsigned long k, unsigned long	keys[16])
 	permut_c0d0(&c0, &d0, keys);
 }
 
+static inline uint32_t rotl32 (uint32_t x, unsigned int y)
+{
+  return (x << y) | (x >> (32 - y));
+}
+
+static inline uint32_t rotr32 (uint32_t x, unsigned int y)
+{
+  return (x >> y) | (x << (32 - y));
+}
+
 unsigned long	ff(unsigned long r, unsigned long k)
 {
 	unsigned long	er;
@@ -153,15 +163,26 @@ unsigned long	ff(unsigned long r, unsigned long k)
 	i = 0;
 	er = 0;
 	result = 0;
-	while (i < 48)
-	{
-		er = er | ((1UL << (32 - g_ebit[i])) & r ? 1UL << (47 - i) : 0);
-		i++;
-	}
+
+	// while (i < 48)
+	// {
+	// 	er = er | ((1UL << (32 - g_ebit[i])) & r ? 1UL << (47 - i) : 0);
+	// 	i++;
+	// }
+
+	er = (rotl32(r, 1) & 0x3f)
+	  | ((unsigned long)(r & 0x000001f8) << 3)
+	  | ((unsigned long)(r & 0x00001f80) << 5)
+	  | ((unsigned long)(r & 0x0001f800) << 7)
+	  | ((unsigned long)(r & 0x001f8000) << 9)
+	  | ((unsigned long)(r & 0x01f80000) << 11)
+	  | ((unsigned long)(r & 0x1f800000) << 13)
+	  | ((unsigned long)(rotr32(r, 1) & 0xFC000000) << 16);
+
 	er = er ^ k;
 	i = 0;
 	unsigned long p4 = 0;
-	unsigned long f = 0;
+	
 	while (i < 8)
 	{
 		unsigned long p1 = (er >> ((7 - i) * 6)) & 63;
@@ -170,13 +191,35 @@ unsigned long	ff(unsigned long r, unsigned long k)
 		p4 = (p4 << 4) | (g_ss[i][p2 * 16 + p3]);
 		i++;
 	}
-	int j = 0;
-	while (j < 32)
-	{
-		f = (f << 1UL) | ((1UL << (32 - g_p[j])) & p4 ? 1UL : 0);
-		j++;
-	}
-	return (f);
+	//int j = 0;
+	unsigned int x = p4;
+	//#pragma clang loop vectorize(enable)
+	//while (j < 32)
+	//{
+	//	x = x | (((1UL << (32 - g_p[j])) & p4 ? 1UL : 0) << (31 - j));
+	//	j++;
+	//}
+	
+	x = ((x & 0x00000004) << 3)
+	  | ((x & 0x00004000) << 4)
+	  | rotl32(x & 0x12020120, 5)
+	  | ((x & 0x00100000) << 6)
+	  | ((x & 0x00008000) << 9)
+	  | ((x & 0x04000000) >> 22)
+	  | ((x & 0x00000001) << 11)
+	  | rotl32(x & 0x20000200, 12)
+	  | ((x & 0x00200000) >> 19)
+	  | ((x & 0x00000040) << 14)
+	  | ((x & 0x00010000) << 15)
+	  | ((x & 0x00000002) << 16)
+	  | rotl32(x & 0x40801800, 17)
+	  | ((x & 0x00080000) >> 13)
+	  | ((x & 0x00000010) << 21)
+	  | ((x & 0x01000000) >> 10)
+	  | rotl32(x & 0x88000008, 24)
+	  | ((x & 0x00000480) >> 7)
+	  | ((x & 0x00442000) >> 6);
+	return (x);
 }
 
 unsigned long	des_decryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
