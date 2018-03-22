@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   buff_read.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 14:07:40 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/20 15:28:31 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/22 00:29:50 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,10 @@ char	*get_from_fd(int fd, ssize_t *r)
 	*r = 0;
 	while ((rd = read(fd, input + *r, BUFF_SIZE)))
 	{
-		if (rd == -1)
-			return (NULL);
+		if (rd == -1){
+			printf("SECOND\n");
+			return (input);
+		}
 		*r += rd;
 		offset++;
 		if (rd == BUFF_SIZE)
@@ -37,5 +39,6 @@ char	*get_from_fd(int fd, ssize_t *r)
 			input = new;
 		}
 	}
+	printf("func: %s\n", input);
 	return (input);
 }

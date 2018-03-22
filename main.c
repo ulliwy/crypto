@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/20 20:13:35 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/21 23:34:33 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,8 @@ int		parse_opts(char **av, int i, t_opt *opts)
 			opts->d = 1;
 		else if (av[i][1] == 'a')
 			opts->a = 1;
+		else if (av[i][1] == 'e')
+			;
 		else if (av[i][1] == 'v')
 		{
 			opts->iv = 1;
@@ -147,6 +149,7 @@ void	opts_init(t_opt *opts, t_cmd *cmd)
 	opts->a = 0;
 	opts->iv = 0;
 	opts->v = 0;
+	opts->prev = 0;
 	opts->entered_key = NULL;
 	opts->input_file = NULL;
 	opts->output_file = NULL;

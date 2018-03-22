@@ -6,7 +6,7 @@
 #    By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2018/03/21 00:39:57 by Ulliwy           ###   ########.fr        #
+#    Updated: 2018/03/22 00:08:03 by Ulliwy           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -79,7 +79,7 @@ LIBFT = libft/ft_memset.c\
 		libft/ft_isspace.c\
 		libft/ft_lstback.c\
 		libft/ft_strrev.c
-FLAGS = -Wall -Wextra -Werror -O3 -flto -march=native
+FLAGS = -Wall -Wextra -Werror -O3 -flto -march=native -g -fsanitize=address
 
 all: $(NAME)
 

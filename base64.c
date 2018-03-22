@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 11:23:32 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/20 19:23:14 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/22 00:21:32 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ unsigned char	*remove_spaces(unsigned char *in, ssize_t *size)
 
 	i = 0;
 	j = 0;
-	while (in[i])
+	printf("AAAAAAAAAAAA{%c}\n", in[0]);
+	while ((ssize_t)i < *size)
 	{
 		if ((in[i] >= 'A' && in[i] <= 'Z') || (in[i] >= 'a' && in[i] <= 'z') ||
 			(in[i] >= '0' && in[i] <= '9') || in[i] == '+' || in[i] == '/' ||
@@ -65,6 +66,7 @@ unsigned char	*b64_decode(unsigned char *in, ssize_t *r)
 	unsigned char	*temp;
 	int				i;
 
+	printf("%s\n", in);
 	in = remove_spaces(in, r);
 	new_size = (*r / 4) * 3;
 	*r = new_size;

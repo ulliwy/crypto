@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/03/20 19:42:08 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/21 23:27:50 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct			s_opt
 	int					a;
 	int					iv;
 	unsigned long		v;
+	unsigned long		prev;
 	char				*entered_key;
 	char				*input_file;
 	char				*output_file;
