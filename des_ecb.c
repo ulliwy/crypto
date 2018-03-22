@@ -6,18 +6,28 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/22 00:42:18 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/22 16:35:32 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl.h"
-#include <stdio.h>
 
 int		put_key_err()
 {
 	ft_putstr("non-hex digit\n");
 	ft_putstr("invalid hex key value\n");
 	return (0);
+}
+
+int	get_value(char *c)
+{
+	if (!((*c >= 'a' && *c <= 'f') || (*c >= '0' && *c <= '9')))
+		return (0);
+	if (*c >= 'a' && *c <= 'f')
+		*c = *c - 87;
+	else
+		*c = *c - '0';
+	return (1);
 }
 
 int get_keys3(t_opt *opts)
@@ -28,23 +38,16 @@ int get_keys3(t_opt *opts)
 
 	i = 0;
 	k = 0;
-	//printf("%lu %lu %lu\n", opts->keys[0], opts->keys[1], opts->keys[2]);
 	while (opts->entered_key[i] && opts->entered_key[i] != '\n' && i < 48)
 	{
 		c = ft_tolower(opts->entered_key[i]);
-		if (!((c >= 'a' && c <= 'f') || (c >= '0' && c <= '9')))
+		if (!get_value(&c))
 			return (put_key_err());
-		if (c >= 'a' && c <= 'f')
-			c = c - 87;
-		else
-			c = c - '0';
 		opts->keys[k] = opts->keys[k] * 16 + c;
 		i++;
 		if (i && (i % 16 == 0))
 			k++;
 	}
-	// if (i && (i % 16 == 0))
-	// 	k++;
 	while (i < 48)
 	{
 		opts->keys[k] = opts->keys[k] * 16;
@@ -52,7 +55,6 @@ int get_keys3(t_opt *opts)
 		if (i && (i % 16 == 0))
 			k++;
 	}
-	//printf("%lu %lu %lu\n", opts->keys[0], opts->keys[1], opts->keys[2]);
 	return (1);
 }
 
@@ -70,21 +72,13 @@ int		get_key(t_opt *opts)
 	while (i < len && i < 16)
 	{
 		c = ft_tolower(opts->entered_key[i]);
-		if (!((c >= 'a' && c <= 'f') || (c >= '0' && c <= '9')))
+		if (!get_value(&c))
 			return (put_key_err());
-		if (c >= 'a' && c <= 'f')
-			c = c - 87;
-		else
-			c = c - '0';
 		opts->keys[0] = opts->keys[0] * 16 + c;
 		i++;
 	}
-	while (i < 16)
-	{
+	while (i++ < 16)
 		opts->keys[0] = opts->keys[0] * 16;
-		i++;
-	}
-	//printf("%lX\n", opts->main_key);
 	return (1);
 }
 
@@ -97,13 +91,15 @@ unsigned long	permut_pc2(unsigned long c0, unsigned long d0)
 	key = 0;
 	while (i < 48)
 	{
-		key = key | (((1UL << (56 - g_pc2[i])) & (c0 | d0)) ? 1UL << (47 - i) : 0);
+		key = key | (((1UL << (56 - g_pc2[i])) &
+				(c0 | d0)) ? 1UL << (47 - i) : 0);
 		i++;
 	}
 	return (key);
 }
 
-void	permut_c0d0(unsigned long *c0, unsigned long *d0, unsigned long	keys[16])
+void	permut_c0d0(unsigned long *c0, unsigned long *d0,
+			unsigned long keys[16])
 {
 	int i;
 	unsigned long	cl;
@@ -154,91 +150,92 @@ static inline uint32_t rotr32 (uint32_t x, unsigned int y)
   return (x >> y) | (x << (32 - y));
 }
 
-unsigned long	ff(unsigned long r, unsigned long k)
+static inline unsigned int 	get_p4(unsigned long p4)
 {
-	unsigned long	er;
-	unsigned long	result;
-	int 			i;
-
-	i = 0;
-	er = 0;
-	result = 0;
-
-	// while (i < 48)
-	// {
-	// 	er = er | ((1UL << (32 - g_ebit[i])) & r ? 1UL << (47 - i) : 0);
-	// 	i++;
-	// }
-
-	er = (rotl32(r, 1) & 0x3f)
-	  | ((unsigned long)(r & 0x000001f8) << 3)
-	  | ((unsigned long)(r & 0x00001f80) << 5)
-	  | ((unsigned long)(r & 0x0001f800) << 7)
-	  | ((unsigned long)(r & 0x001f8000) << 9)
-	  | ((unsigned long)(r & 0x01f80000) << 11)
-	  | ((unsigned long)(r & 0x1f800000) << 13)
-	  | ((unsigned long)(rotr32(r, 1) & 0xFC000000) << 16);
-
-	er = er ^ k;
-	i = 0;
-	unsigned long p4 = 0;
-	
-	while (i < 8)
-	{
-		unsigned long p1 = (er >> ((7 - i) * 6)) & 63;
-		unsigned long p2 = (1 & p1) | ((p1 >> 4) & 2);
-		unsigned long p3 = (p1 >> 1) & 15;
-		p4 = (p4 << 4) | (g_ss[i][p2 * 16 + p3]);
-		i++;
-	}
-	//int j = 0;
 	unsigned int x = p4;
-	//#pragma clang loop vectorize(enable)
-	//while (j < 32)
-	//{
-	//	x = x | (((1UL << (32 - g_p[j])) & p4 ? 1UL : 0) << (31 - j));
-	//	j++;
-	//}
 	
 	x = ((x & 0x00000004) << 3)
-	  | ((x & 0x00004000) << 4)
-	  | rotl32(x & 0x12020120, 5)
-	  | ((x & 0x00100000) << 6)
-	  | ((x & 0x00008000) << 9)
-	  | ((x & 0x04000000) >> 22)
-	  | ((x & 0x00000001) << 11)
-	  | rotl32(x & 0x20000200, 12)
-	  | ((x & 0x00200000) >> 19)
-	  | ((x & 0x00000040) << 14)
-	  | ((x & 0x00010000) << 15)
-	  | ((x & 0x00000002) << 16)
-	  | rotl32(x & 0x40801800, 17)
-	  | ((x & 0x00080000) >> 13)
-	  | ((x & 0x00000010) << 21)
-	  | ((x & 0x01000000) >> 10)
-	  | rotl32(x & 0x88000008, 24)
-	  | ((x & 0x00000480) >> 7)
-	  | ((x & 0x00442000) >> 6);
+		| ((x & 0x00004000) << 4)
+		| rotl32(x & 0x12020120, 5)
+		| ((x & 0x00100000) << 6)
+		| ((x & 0x00008000) << 9)
+		| ((x & 0x04000000) >> 22)
+		| ((x & 0x00000001) << 11)
+		| rotl32(x & 0x20000200, 12)
+		| ((x & 0x00200000) >> 19)
+		| ((x & 0x00000040) << 14)
+		| ((x & 0x00010000) << 15)
+		| ((x & 0x00000002) << 16)
+		| rotl32(x & 0x40801800, 17)
+		| ((x & 0x00080000) >> 13)
+		| ((x & 0x00000010) << 21)
+		| ((x & 0x01000000) >> 10)
+		| rotl32(x & 0x88000008, 24)
+		| ((x & 0x00000480) >> 7)
+		| ((x & 0x00442000) >> 6);
 	return (x);
 }
 
-unsigned long	des_decryption(unsigned long msg, unsigned long keys[16], t_opt opts, int i)
+unsigned long	ff(unsigned long r, unsigned long k)
 {
-	unsigned long	temp;
-	int 			j;
+	unsigned long	er;
+	int 			i;
+	unsigned long	p1;
+	unsigned long	p2;
+	unsigned long	p4;
+
+	er = ((rotl32(r, 1) & 0x3f)
+		| ((unsigned long)(r & 0x000001f8) << 3)
+		| ((unsigned long)(r & 0x00001f80) << 5)
+		| ((unsigned long)(r & 0x0001f800) << 7)
+		| ((unsigned long)(r & 0x001f8000) << 9)
+		| ((unsigned long)(r & 0x01f80000) << 11)
+		| ((unsigned long)(r & 0x1f800000) << 13)
+		| ((unsigned long)(rotr32(r, 1) & 0xFC000000) << 16)) ^ k;
+	i = 0;
+	p4 = 0;
+	while (i < 8)
+	{
+		p1 = (er >> ((7 - i) * 6)) & 63;
+		p2 = (1 & p1) | ((p1 >> 4) & 2);
+		p4 = (p4 << 4) | (g_ss[i][p2 * 16 + ((p1 >> 1) & 15)]);
+		i++;
+	}
+	return (get_p4(p4));
+}
+
+unsigned long 	half_permut(unsigned long temp, unsigned long keys[16])
+{
 	unsigned long	l[17];
 	unsigned long	r[17];
+	int j;
 
-	msg = reverse_bits(msg);
-	temp = 0;
+	l[0] = temp >> 32;
+	r[0] = temp & ((1UL << 32) - 1UL);
+	j = 1;
+	while (j <= 16)
+	{
+		l[j] = r[j - 1];
+		r[j] = l[j - 1] ^ ff(r[j - 1], keys[j - 1]);
+		j++;	
+	}
+	r[16] = (r[16] << 32) | l[16];
 	j = 0;
+	temp = 0;
 	while (j < 64)
 	{
-		temp = temp | ((msg & 1UL) << (64 - g_ip_1[63 - j]));
-		msg = msg >> 1;
+		temp = temp | (((1UL << (64 - g_ip_1[j])) & r[16]) ? 1UL << (63 - j) : 0);
 		j++;
 	}
-	
+	return (temp);
+}
+
+unsigned long 	rev_half_permut(unsigned long temp, unsigned long keys[16])
+{
+	unsigned long	l[17];
+	unsigned long	r[17];
+	int j;
+
 	r[16] = temp >> 32;
 	l[16] = temp & ((1UL << 32) - 1UL);
 	j = 16;
@@ -257,14 +254,28 @@ unsigned long	des_decryption(unsigned long msg, unsigned long keys[16], t_opt op
 		l[0] = l[0] >> 1;
 		j++;
 	}
+	return (temp);
+}
+
+unsigned long	des_decryption(unsigned long msg, unsigned long keys[16], t_opt opts, int i)
+{
+	unsigned long	temp;
+	int 			j;
+
+	msg = reverse_bits(msg);
+	temp = 0;
+	j = 0;
+	while (j < 64)
+	{
+		temp = temp | ((msg & 1UL) << (64 - g_ip_1[63 - j]));
+		msg = msg >> 1;
+		j++;
+	}
+	temp = rev_half_permut(temp, keys);
 	if (!i && opts.cmd->cbc)
 		temp = temp ^ opts.v;
 	if (i > 0 && opts.cmd->cbc)
 		temp = temp ^ reverse_bits(opts.prev);
-	//printf("val: %d\n", val);
-	//temp = reverse_bits(temp);
-	//(*msg)[i] = temp;
-	//write(fd, &temp, sizeof(temp) - (i == size / 8 - 1 ? val : 0));
 	return (temp);
 }
 
@@ -272,8 +283,6 @@ unsigned long	des_encryption(unsigned long msg, unsigned long keys[16], t_opt op
 {
 	unsigned long	temp;
 	int 			j;
-	unsigned long	l[17];
-	unsigned long	r[17];
 
 	msg = reverse_bits(msg);
 	if (!i && opts.cmd->cbc)
@@ -282,32 +291,12 @@ unsigned long	des_encryption(unsigned long msg, unsigned long keys[16], t_opt op
 		msg = reverse_bits(opts.prev) ^ msg;
 	temp = 0;
 	j = 0;
-	//initial permutation
 	while (j < 64)
 	{
 		temp = temp | (((1UL << (64 - g_ip[j])) & msg) ? 1UL << (63 - j) : 0);
 		j++;
 	}
-	l[0] = temp >> 32;
-	r[0] = temp & ((1UL << 32) - 1UL);
-	j = 1;
-	while (j <= 16)
-	{
-		l[j] = r[j - 1];
-		r[j] = l[j - 1] ^ ff(r[j - 1], keys[j - 1]);
-		j++;
-		
-	}
-
-	r[16] = (r[16] << 32) | l[16];
-	j = 0;
-	temp = 0;
-	while (j < 64)
-	{
-		temp = temp | (((1UL << (64 - g_ip_1[j])) & r[16]) ? 1UL << (63 - j) : 0);
-		j++;
-	}
-	msg = reverse_bits(temp);
+	msg = reverse_bits(half_permut(temp, keys));
 	return (msg);
 }
 
@@ -397,34 +386,20 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		write(fd, msg, (size / 8 + 1) * sizeof(unsigned long));
 }
 
-void	des_ecb(t_opt *opts)
+void	des(t_opt *opts)
 {
 	char	*input;
 	ssize_t r;
 
-	if (!opts->input_file) {
-		input = get_from_fd(0, &r);
-		//printf("->>>>>%s\n", input);
-	}
-	else
-	{
-		if ((opts->fd = open(opts->input_file, O_RDONLY)) == -1)
-		{
-			put_open_err(opts->input_file);
-			return ;
-		}
-	 	input = get_from_fd(opts->fd, &r);
-	 	close(opts->fd);
-	}
-	if (!opts->output_file) {
+	opts->fd = !opts->input_file ? 0 : open(opts->input_file, O_RDONLY);
+	if (opts->fd == -1)
+		return (put_open_err(opts->input_file));
+	input = get_from_fd(opts->fd, &r);
+	close(opts->fd);
+	if (!opts->output_file)
 		opts->fd = 1;
-	}
 	else if ((opts->fd = open(opts->output_file, O_CREAT | O_WRONLY | O_APPEND | O_TRUNC, 0644)) == -1)
-	{
-		put_open_err(opts->output_file);
-		return ;
-	}
-	
+		return (put_open_err(opts->output_file));
 	if (opts->cmd->cbc3)
 		opts->cmd->cbc = 1;
 	if (opts->d)
@@ -454,7 +429,7 @@ void	des_prep(t_opt opts)
 	}
 	else if(!get_key(&opts))
 		return ; 
-	des_ecb(&opts);
+	des(&opts);
 	if (allocated)
 		free(opts.entered_key);
 }

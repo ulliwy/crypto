@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 14:07:40 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/22 01:07:23 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/22 11:42:59 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,9 @@ char	*get_from_fd(int fd, ssize_t *r)
 	char		*input;
 	char		*new;
 	ssize_t		rd;
-	ssize_t		available = BUFF_SIZE;
+	ssize_t		available;
 
+	available = BUFF_SIZE;
 	if (!(input = (char *)ft_memalloc(available)))
 		return (NULL);
 	*r = 0;

@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/21 23:34:33 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/22 14:10:29 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,8 +194,5 @@ int		main(int argc, char **argv)
 		return (put_iv_err(2));
 	else if (cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3)
 		des_prep(opts);
-
-	//printf("Run...\nsudo leaks %u\n...in the next %u seconds\n", getpid(), 100);
-  	//sleep(100);
 	return (0);
 }
