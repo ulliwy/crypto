@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/22 00:23:09 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/22 00:42:18 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -404,7 +404,7 @@ void	des_ecb(t_opt *opts)
 
 	if (!opts->input_file) {
 		input = get_from_fd(0, &r);
-		printf("->>>>>%s\n", input);
+		//printf("->>>>>%s\n", input);
 	}
 	else
 	{

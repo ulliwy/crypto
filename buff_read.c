@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 14:07:40 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/22 00:29:50 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/22 01:07:23 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,28 +17,25 @@ char	*get_from_fd(int fd, ssize_t *r)
 	char		*input;
 	char		*new;
 	ssize_t		rd;
-	int			offset;
+	ssize_t		available = BUFF_SIZE;
 
-	if (!(input = (char *)ft_memalloc(BUFF_SIZE + 9)))
+	if (!(input = (char *)ft_memalloc(available)))
 		return (NULL);
-	offset = 0;
 	*r = 0;
-	while ((rd = read(fd, input + *r, BUFF_SIZE)))
+	while ((rd = read(fd, input + *r, available)))
 	{
-		if (rd == -1){
-			printf("SECOND\n");
-			return (input);
-		}
+		if (rd == -1)
+			return (NULL);
+		available -= rd;
 		*r += rd;
-		offset++;
-		if (rd == BUFF_SIZE)
+		if (!available)
 		{
-			new = (char *)ft_memalloc(BUFF_SIZE + offset * BUFF_SIZE + 9);
-			ft_memcpy(new, input, offset * BUFF_SIZE);
+			new = (char *)ft_memalloc(BUFF_SIZE + (*r));
+			ft_memcpy(new, input, *r);
 			free(input);
 			input = new;
+			available = BUFF_SIZE;
 		}
 	}
-	printf("func: %s\n", input);
 	return (input);
 }
