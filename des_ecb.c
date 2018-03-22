@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des_ecb.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/21 02:51:22 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/21 16:59:04 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,21 +222,20 @@ unsigned long	ff(unsigned long r, unsigned long k)
 	return (x);
 }
 
-unsigned long	des_decryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
+unsigned long	des_decryption(unsigned long msg, int i, t_opt opts, unsigned long keys[16], unsigned long prev)
 {
 	unsigned long	temp;
-	unsigned long	cur;
 	int 			j;
 	unsigned long	l[17];
 	unsigned long	r[17];
 
-	cur = reverse_bits((*msg)[i]);
+	msg = reverse_bits(msg);
 	temp = 0;
 	j = 0;
 	while (j < 64)
 	{
-		temp = temp | ((cur & 1UL) << (64 - g_ip_1[63 - j]));
-		cur = cur >> 1;
+		temp = temp | ((msg & 1UL) << (64 - g_ip_1[63 - j]));
+		msg = msg >> 1;
 		j++;
 	}
 	
@@ -261,7 +260,7 @@ unsigned long	des_decryption(unsigned long **msg, int i, t_opt opts, unsigned lo
 	if (!i && opts.cmd->cbc)
 		temp = temp ^ opts.v;
 	if (i > 0 && opts.cmd->cbc)
-		temp = temp ^ reverse_bits((*msg)[i - 1]);
+		temp = temp ^ reverse_bits(prev);
 	//printf("val: %d\n", val);
 	//temp = reverse_bits(temp);
 	//(*msg)[i] = temp;
@@ -269,24 +268,24 @@ unsigned long	des_decryption(unsigned long **msg, int i, t_opt opts, unsigned lo
 	return (temp);
 }
 
-unsigned long	des_encryption(unsigned long **msg, int i, t_opt opts, unsigned long keys[16])
+unsigned long	des_encryption(unsigned long msg, unsigned long keys[16])
 {
 	unsigned long	temp;
 	int 			j;
 	unsigned long	l[17];
 	unsigned long	r[17];
 
-	(*msg)[i] = reverse_bits((*msg)[i]);
-	if (!i && opts.cmd->cbc)
-		(*msg)[0] = (*msg)[0] ^ opts.v; 
-	if (i > 0 && opts.cmd->cbc)
-		(*msg)[i] = reverse_bits((*msg)[i - 1]) ^ (*msg)[i];
+	// msg = reverse_bits(msg);
+	// if (!i && opts.cmd->cbc)
+	// 	msg = msg ^ opts.v; 
+	// if (i > 0 && opts.cmd->cbc)
+	//	msg = reverse_bits(prev) ^ msg;
 	temp = 0;
 	j = 0;
 	//initial permutation
 	while (j < 64)
 	{
-		temp = temp | (((1UL << (64 - g_ip[j])) & (*msg)[i]) ? 1UL << (63 - j) : 0);
+		temp = temp | (((1UL << (64 - g_ip[j])) & msg) ? 1UL << (63 - j) : 0);
 		j++;
 	}
 	l[0] = temp >> 32;
@@ -308,8 +307,8 @@ unsigned long	des_encryption(unsigned long **msg, int i, t_opt opts, unsigned lo
 		temp = temp | (((1UL << (64 - g_ip_1[j])) & r[16]) ? 1UL << (63 - j) : 0);
 		j++;
 	}
-	(*msg)[i] = reverse_bits(temp);
-	return ((*msg)[i]);
+	msg = reverse_bits(temp);
+	return (msg);
 }
 
 void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
@@ -339,24 +338,24 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	//printf("%lu\n", size);
 	while (i < size / 8)
 	{
-		if (opts.cmd->ecb3 || opts.cmd->cbc3)
-		{
-			// des_encryption(&msg, i, opts, keys[0]);
-			// if (opts.cmd->ecb3 || opts.cmd->cbc3)
-			// {
-			// 	temp = des_decryption(&msg, i, opts, keys[1]);
-			// 	temp = reverse_bits(temp);
-			// 	msg[i] = temp;
-			// 	msg[i] = des_encryption(&msg, i, opts, keys[2]);
-			// }
-			temp = des_decryption(&msg, i, opts, keys[2]);
-			temp = reverse_bits(temp);
-			msg[i] = temp;
-		 	des_encryption(&msg, i, opts, keys[1]);
-		 	// temp = des_decryption(&msg, i, opts, keys[0]);
-		 // 	val = temp & 255;
-			// temp = reverse_bits(temp);
-		}
+		// if (opts.cmd->ecb3 || opts.cmd->cbc3)
+		// {
+		// 	// des_encryption(&msg, i, opts, keys[0]);
+		// 	// if (opts.cmd->ecb3 || opts.cmd->cbc3)
+		// 	// {
+		// 	// 	temp = des_decryption(&msg, i, opts, keys[1]);
+		// 	// 	temp = reverse_bits(temp);
+		// 	// 	msg[i] = temp;
+		// 	// 	msg[i] = des_encryption(&msg, i, opts, keys[2]);
+		// 	// }
+		// 	temp = des_decryption(&msg, i, opts, keys[2]);
+		// 	temp = reverse_bits(temp);
+		// 	msg[i] = temp;
+		//  	//des_encryption(&msg, i, opts, keys[1]);
+		//  	// temp = des_decryption(&msg, i, opts, keys[0]);
+		//  // 	val = temp & 255;
+		// 	// temp = reverse_bits(temp);
+		// }
 		// else
 		// {
 		// 	if (i % 1000 == 0)
@@ -365,7 +364,7 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		// 	// val = temp & 255;
 		// 	// temp = reverse_bits(temp);
 		//}
-		temp = des_decryption(&msg, i, opts, keys[0]);
+		temp = des_decryption(msg[i], i, opts, keys[0], msg[i - 1]);
 		val = temp & 255;
 		temp = reverse_bits(temp);
 		res[i] = temp;
@@ -385,7 +384,7 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 {
 	unsigned long	keys[3][16];
 	unsigned long	*msg;
-	unsigned long	temp;
+	//unsigned long	temp;
 	int 			i;
 	// int 			j;
 	// unsigned long	l[17];
@@ -403,14 +402,20 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	i = 0;
 	while (i < size / 8 + 1)
 	{
-		des_encryption(&msg, i, opts, keys[0]);
-		if (opts.cmd->ecb3 || opts.cmd->cbc3)
-		{
-			temp = des_decryption(&msg, i, opts, keys[1]);
-			temp = reverse_bits(temp);
-			msg[i] = temp;
-			msg[i] = des_encryption(&msg, i, opts, keys[2]);
-		}
+		// msg = reverse_bits(msg);
+		if (!i && opts.cmd->cbc)
+			msg[i] = des_encryption(reverse_bits(msg[i]) ^ opts.v, keys[0]);
+		else if (i > 0 && opts.cmd->cbc)
+			msg[i] = des_encryption(reverse_bits(msg[i]) ^ reverse_bits(msg[i - 1]), keys[0]);
+		else
+			msg[i] = des_encryption(reverse_bits(msg[i]), keys[0]);
+		// if (opts.cmd->ecb3 || opts.cmd->cbc3)
+		// {
+		// 	temp = des_decryption(&msg, i, opts, keys[1]);
+		// 	temp = reverse_bits(temp);
+		// 	msg[i] = temp;
+		// 	//msg[i] = des_encryption(&msg, i, opts, keys[2]);
+		// }
 		i++;
 	}
 	in = (unsigned char *)msg;
