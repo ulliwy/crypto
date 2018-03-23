@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   base64.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 11:23:32 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/22 14:30:33 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/23 12:56:10 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ unsigned char	*remove_spaces(unsigned char *in, ssize_t *size)
 			i++;
 			j++;
 		}
-		else if (in[i] == ' ' || in[i] == '\n' || in[i] == '\t' || in[i] == 13)
+		else if (in[i] == ' ' || in[i] == '\n' || in[i] == '\t' || in[i] == 13 || in[i] == 3)
 			i++;
 		else
 			return (put_stream_err());
@@ -61,15 +61,12 @@ unsigned char	*remove_spaces(unsigned char *in, ssize_t *size)
 
 unsigned char	*b64_decode(unsigned char *in, ssize_t *r)
 {
-	ssize_t			new_size;
 	unsigned char	*temp;
 	int				i;
 
 	in = remove_spaces(in, r);
-	new_size = (*r / 4) * 3;
-	*r = new_size;
-	temp = (unsigned char *)ft_memalloc(new_size + 1);
-	temp[new_size] = '\0';
+	*r = (*r / 4) * 3;
+	temp = (unsigned char *)ft_memalloc(*r);
 	i = 0;
 	while (in && *in && *in != '=')
 	{
@@ -78,9 +75,13 @@ unsigned char	*b64_decode(unsigned char *in, ssize_t *r)
 		if (in[2] != '=')
 			temp[i + 1] = ((giv(in[1]) & 15) << 4) |
 				((giv(in[2]) == -1 ? 0 : giv(in[2])) >> 2);
+		else
+			(*r)--;
 		if (in[3] != '=')
 			temp[i + 2] = ((giv(in[2]) & 3) << 6) |
 				((giv(in[3]) == -1 ? 0 : giv(in[3])) & 63);
+		else
+			(*r)--;
 		i = i + 3;
 		in += 4;
 	}
@@ -126,7 +127,7 @@ void	b64_encode(t_opt *opts, ssize_t r)
 	while (i < r)
 	{
 		b54_encryption(opts, &i, &j, r);
-		if (j && ((j + 1) % 65 == 0) && opts->entered_key)
+		if (j && ((j + 1) % 65 == 0) && opts->entered_key && (i != r - 1))
 			opts->out[j++] = '\n';
 		i++;
 	}

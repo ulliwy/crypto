@@ -2,6 +2,7 @@ mkdir tests
 YEL='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
+
 # base64
 
 ./ft_ssl base64 -e -i bigtest -o tests/eb64_1_1
@@ -14,8 +15,8 @@ else
 echo "${RED}FAIL${NC}"
 fi
 
-./ft_ssl base64 -d -i tests/eb64_1_1 -o tests/db64_1_1
-base64 -D -i tests/eb64_1_1 -o tests/db64_1_2
+./ft_ssl base64 -d -i tests/eb64_1_2 -o tests/db64_1_1
+base64 -D -i tests/eb64_1_2 -o tests/db64_1_2
 printf "base64 decode: "
 if `diff tests/db64_1_1 tests/db64_1_2 > /dev/null`; then
 echo "${YEL}OK${NC}"
