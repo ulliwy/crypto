@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/22 16:35:32 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/22 16:54:25 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,7 +300,7 @@ unsigned long	des_encryption(unsigned long msg, unsigned long keys[16], t_opt op
 	return (msg);
 }
 
-void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
+void	des_ecb_decode(ssize_t size, t_opt opts)
 {
 	unsigned long	keys[3][16];
 	unsigned long	*msg;
@@ -316,9 +316,9 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 	} else
 		create_subkeys(opts.keys[0], keys[0]);
 	if (opts.a)
-		msg = (unsigned long *)b64_decode(in, &size);
+		msg = (unsigned long *)b64_decode(opts.in, &size);
 	else
-		msg = (unsigned long *)in;
+		msg = (unsigned long *)opts.in;
 	res = (unsigned long *)ft_memalloc(size);
 	i = 0;
 
@@ -340,21 +340,21 @@ void	des_ecb_decode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		res[i] = temp;
 		i++;
 	}
-	write(fd, res, sizeof(temp) * i - (i - 1 == size / 8 - 1 ? val : 0));
+	write(opts.fd, res, sizeof(temp) * i - (i - 1 == size / 8 - 1 ? val : 0));
 	free(res);
 	if (opts.a)
 		free(msg);
 }
 
 
-void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
+void	des_ecb_encode(ssize_t size, t_opt opts)
 {
 	unsigned long	keys[3][16];
 	unsigned long	*msg;
 	unsigned long	temp;
 	int 			i;
 
-	pad(in, size);
+	pad(opts.in, size);
 	if (opts.cmd->ecb3 || opts.cmd->cbc3)
 	{
 		create_subkeys(opts.keys[0], keys[0]);
@@ -362,7 +362,7 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		create_subkeys(opts.keys[2], keys[2]);
 	} else
 		create_subkeys(opts.keys[0], keys[0]);
-	msg = (unsigned long *)in;
+	msg = (unsigned long *)opts.in;
 	i = 0;
 	while (i < size / 8 + 1)
 	{
@@ -378,23 +378,21 @@ void	des_ecb_encode(unsigned char *in, int fd, ssize_t size, t_opt opts)
 		}
 		i++;
 	}
-	in = (unsigned char *)msg;
-	opts.in = in;
+	opts.in = (unsigned char *)msg;
 	if (opts.a)
 		b64_encode(&opts, (size / 8 + 1) * sizeof(unsigned long));
 	else
-		write(fd, msg, (size / 8 + 1) * sizeof(unsigned long));
+		write(opts.fd, msg, (size / 8 + 1) * sizeof(unsigned long));
 }
 
 void	des(t_opt *opts)
 {
-	char	*input;
 	ssize_t r;
 
 	opts->fd = !opts->input_file ? 0 : open(opts->input_file, O_RDONLY);
 	if (opts->fd == -1)
 		return (put_open_err(opts->input_file));
-	input = get_from_fd(opts->fd, &r);
+	opts->in = (unsigned char *)get_from_fd(opts->fd, &r);
 	close(opts->fd);
 	if (!opts->output_file)
 		opts->fd = 1;
@@ -403,11 +401,11 @@ void	des(t_opt *opts)
 	if (opts->cmd->cbc3)
 		opts->cmd->cbc = 1;
 	if (opts->d)
-		des_ecb_decode((unsigned char *)input, opts->fd, r, *opts);
+		des_ecb_decode(r, *opts);
 	else
-		des_ecb_encode((unsigned char *)input, opts->fd, r, *opts);
+		des_ecb_encode(r, *opts);
 	close(opts->fd);
-	free(input);
+	free(opts->in);
 }
 
 void	des_prep(t_opt opts)
