@@ -3,41 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/22 14:10:29 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/23 15:34:50 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl.h"
-
-int		err_usage(int type)
-{
-	if (!type)
-		ft_putstr("usage: ft_ssl command [command opts] [command args]\n");
-	return (0);
-}
-
-int		err_options(char cmd)
-{
-	ft_putstr("ft_ssl: Error: '");
-	ft_putchar(cmd);
-	ft_putstr("' is an invalid option.\n");
-	ft_putstr("Available options: edkvio\n");
-	return (-2);
-}
-
-int		err_usage_commands(char *cmd)
-{
-	ft_putstr("ft_ssl: Error: '");
-	ft_putstr(cmd);
-	ft_putstr("' is an invalid command.\n\n");
-	ft_putstr("Standard commands:\n\nMessage Digest commands:\n\n");
-	ft_putstr("Cipher commands:\nbase64\ndes\ndes-ecb\ndec-cbc");
-	ft_putstr("\ndes3\ndes3-ecb\ndes3-cbc\n");
-	return (0);
-}
 
 int		parse_command(char **argv, t_cmd *cmd)
 {
@@ -58,18 +31,6 @@ int		parse_command(char **argv, t_cmd *cmd)
 	else
 		return (0);
 	return (1);
-}
-
-int		put_iv_err(int type)
-{
-	if (type == 1)
-	{
-		ft_putstr("non-hex digit\n");
-		ft_putstr("invalid hex iv value\n");
-	}
-	else
-		ft_putstr("iv undefined\n");
-	return (0);
 }
 
 int		get_iv(t_opt *opts, char *str)
@@ -141,33 +102,6 @@ int		parse_opts(char **av, int i, t_opt *opts)
 	else
 		return (0);
 	return (i + 1);
-}
-
-void	opts_init(t_opt *opts, t_cmd *cmd)
-{
-	opts->d = 0;
-	opts->a = 0;
-	opts->iv = 0;
-	opts->v = 0;
-	opts->prev = 0;
-	opts->entered_key = NULL;
-	opts->input_file = NULL;
-	opts->output_file = NULL;
-	opts->in = NULL;
-	opts->out = NULL;
-	opts->cmd = cmd;
-	opts->keys[0] = 0;
-	opts->keys[1] = 0;
-	opts->keys[2] = 0;
-}
-
-void	cmd_init(t_cmd *cmd)
-{
-	cmd->b64 = 0;
-	cmd->ecb = 0;
-	cmd->cbc = 0;
-	cmd->ecb3 = 0;
-	cmd->cbc3 = 0;
 }
 
 int		main(int argc, char **argv)

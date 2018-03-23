@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ssl.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/03/22 13:26:04 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/03/23 15:54:42 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,17 @@ typedef struct			s_opt
 	unsigned long		keys[3];
 }						t_opt;
 
+void					opts_init(t_opt *opts, t_cmd *cmd);
+void					cmd_init(t_cmd *cmd);
+char					giv(char c);
+
+int						get_key(t_opt *opts);
+int						get_keys3(t_opt *opts);
+void					permut_c0d0(unsigned long *c0, unsigned long *d0,
+							unsigned long keys[16]);
+unsigned long			ff(unsigned long r, unsigned long k);
+void					key_gen(unsigned long (*keys)[3][16], t_opt *opts);
+
 void					b64(t_opt *opts);
 void					b64_encode(t_opt *opts, ssize_t r);
 unsigned char			*b64_decode(unsigned char *in, ssize_t *r);
@@ -71,9 +82,22 @@ void					des_prep(t_opt opts);
 unsigned long			reverse_bits(unsigned long msg);
 void					pad(unsigned char *in, ssize_t size);
 
+void					des_ecb_encode(ssize_t size, t_opt opts);
+unsigned long			des_encryption(unsigned long msg,
+							unsigned long keys[16], t_opt opts, int i);
+void					des_ecb_decode(ssize_t size, t_opt opts);
+unsigned long			des_decryption(unsigned long msg,
+							unsigned long keys[16], t_opt opts, int i);
+
 char					*get_from_fd(int fd, ssize_t *r);
 void					print_bits(unsigned long octet, int sep);
 
 void					put_open_err(char *name);
+int						err_usage(int type);
+int						err_options(char cmd);
+int						err_usage_commands(char *cmd);
+int						put_iv_err(int type);
+void					*put_stream_err(void);
+int						put_key_err(void);
 
 #endif

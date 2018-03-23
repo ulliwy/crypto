@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+         #
+#    By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2018/03/22 00:08:03 by Ulliwy           ###   ########.fr        #
+#    Updated: 2018/03/23 15:47:32 by iprokofy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,9 +15,15 @@ SRC = main.c\
 		base64.c\
 		buff_read.c\
 		des_tables.c\
-		des_ecb.c\
+		des.c\
 		print_bits.c\
-		block_handle.c
+		block_handle.c\
+		put_err.c\
+		init.c\
+		key_gen.c\
+		bit_permut.c\
+		des_decode.c\
+		des_encode.c
 LIBFT = libft/ft_memset.c\
 		libft/ft_bzero.c\
 		libft/ft_memcpy.c\

@@ -204,33 +204,33 @@ printf "\n"
 
 # encode/decode
 
-./ft_ssl des3-cbc -k 616263646162636411223344556677888877665544332211 -v 1122334455667788 -i orig | openssl des3 -d -K 616263646162636411223344556677888877665544332211 -iv 1122334455667788 -out tests/ed_1
+./ft_ssl des3-cbc -k 616263646162636411223344556677888877665544332211 -v 1122334455667788 -i bigtest | openssl des3 -d -K 616263646162636411223344556677888877665544332211 -iv 1122334455667788 -out tests/ed_1
 printf "des3-cbc ft_encode/openssl_decode : "
-if `diff orig tests/ed_1 > /dev/null`; then
+if `diff bigtest tests/ed_1 > /dev/null`; then
 echo "${YEL}OK${NC}"
 else
 echo "${RED}FAIL${NC}"
 fi
 
-./ft_ssl des3-cbc -k 616263646162636411223344556677888877665544332211 -v 1122334455667788 -i orig -a | openssl des3 -d -K 616263646162636411223344556677888877665544332211 -iv 1122334455667788 -out tests/ed_2 -a
+./ft_ssl des3-cbc -k 616263646162636411223344556677888877665544332211 -v 1122334455667788 -i bigtest -a | openssl des3 -d -K 616263646162636411223344556677888877665544332211 -iv 1122334455667788 -out tests/ed_2 -a
 printf "des3-cbc ft_encode/openssl_decode -a: "
-if `diff orig tests/ed_2 > /dev/null`; then
+if `diff bigtest tests/ed_2 > /dev/null`; then
 echo "${YEL}OK${NC}"
 else
 echo "${RED}FAIL${NC}"
 fi
 
-openssl des3 -K 616263646162636411223344556677888877665544332211 -iv 1122334455667788 -in orig | ./ft_ssl des3-cbc -d -k 616263646162636411223344556677888877665544332211 -v 1122334455667788 -o tests/ed_3
+openssl des3 -K 616263646162636411223344556677888877665544332211 -iv 1122334455667788 -in bigtest | ./ft_ssl des3-cbc -d -k 616263646162636411223344556677888877665544332211 -v 1122334455667788 -o tests/ed_3
 printf "des3-cbc openssl_encode/ft_decode: "
-if `diff orig tests/ed_3 > /dev/null`; then
+if `diff bigtest tests/ed_3 > /dev/null`; then
 echo "${YEL}OK${NC}"
 else
 echo "${RED}FAIL${NC}"
 fi
 
-openssl des3 -K 616263646162636411223344556677888877665544332211 -a -iv 1122334455667788 -in orig | ./ft_ssl des3-cbc -a -d -k 616263646162636411223344556677888877665544332211 -v 1122334455667788 -o tests/ed_4
+openssl des3 -K 616263646162636411223344556677888877665544332211 -a -iv 1122334455667788 -in bigtest | ./ft_ssl des3-cbc -a -d -k 616263646162636411223344556677888877665544332211 -v 1122334455667788 -o tests/ed_4
 printf "des3-cbc openssl_encode/ft_decode -a: "
-if `diff orig tests/ed_4 > /dev/null`; then
+if `diff bigtest tests/ed_4 > /dev/null`; then
 echo "${YEL}OK${NC}"
 else
 echo "${RED}FAIL${NC}"
