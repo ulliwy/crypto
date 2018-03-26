@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/23 15:34:50 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/26 16:26:51 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,8 +124,6 @@ int		main(int argc, char **argv)
 	}
 	if (cmd.b64)
 		b64(&opts);
-	else if ((cmd.cbc || cmd.cbc3) && (!opts.iv))
-		return (put_iv_err(2));
 	else if (cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3)
 		des_prep(opts);
 	return (0);

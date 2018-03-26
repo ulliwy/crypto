@@ -6,7 +6,7 @@
 #    By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2018/03/23 15:47:32 by iprokofy         ###   ########.fr        #
+#    Updated: 2018/03/26 16:33:41 by iprokofy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -95,6 +95,7 @@ ft_ssl: $(SRC)
 clean:
 	rm -f $(SRC:.c=.o)
 	rm -f $(LIBFT:.c=.o)
+	rm -f -r ft_ssl.dSYM
 
 fclean: clean
 	rm -f $(NAME)
