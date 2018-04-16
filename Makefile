@@ -6,7 +6,7 @@
 #    By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2018/04/16 12:45:47 by Ulliwy           ###   ########.fr        #
+#    Updated: 2018/04/16 14:29:09 by Ulliwy           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ ft_ssl: $(SRC) libft/libft.a
 clean:
 	rm -f $(SRC:.c=.o)
 	rm -f $(LIBFT:.c=.o)
+	rm -f -r ft_ssl.dSYM
 
 fclean: clean
 	rm -f $(NAME)

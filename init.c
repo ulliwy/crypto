@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 15:33:44 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/23 15:56:50 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/26 16:13:35 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	opts_init(t_opt *opts, t_cmd *cmd)
 	opts->v = 0;
 	opts->prev = 0;
 	opts->entered_key = NULL;
+	opts->entered_iv = NULL;
 	opts->input_file = NULL;
 	opts->output_file = NULL;
 	opts->in = NULL;

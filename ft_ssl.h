@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/03/23 15:54:42 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/26 16:19:48 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct			s_opt
 	unsigned long		v;
 	unsigned long		prev;
 	char				*entered_key;
+	char				*entered_iv;
 	char				*input_file;
 	char				*output_file;
 	unsigned char		*in;
@@ -74,6 +75,7 @@ void					permut_c0d0(unsigned long *c0, unsigned long *d0,
 							unsigned long keys[16]);
 unsigned long			ff(unsigned long r, unsigned long k);
 void					key_gen(unsigned long (*keys)[3][16], t_opt *opts);
+int						get_iv(t_opt *opts, char *str);
 
 void					b64(t_opt *opts);
 void					b64_encode(t_opt *opts, ssize_t r);

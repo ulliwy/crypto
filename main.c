@@ -6,7 +6,11 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2018/04/16 12:53:22 by Ulliwy           ###   ########.fr       */
+=======
+/*   Updated: 2018/03/26 16:26:51 by iprokofy         ###   ########.fr       */
+>>>>>>> b2711e10f6efb959f01520705504c9e25fa64363
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,8 +130,6 @@ int		main(int argc, char **argv)
 	}
 	if (cmd.b64)
 		b64(&opts);
-	else if ((cmd.cbc || cmd.cbc3) && (!opts.iv))
-		return (put_iv_err(2));
 	else if (cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3)
 		des_prep(opts);
 	return (0);

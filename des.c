@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/23 15:53:53 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/03/26 16:29:34 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,15 @@ void	des(t_opt *opts)
 	free(opts->in);
 }
 
+void	read_iv(t_opt *opts)
+{
+	opts->entered_iv = (char *)ft_memalloc(100);
+	ft_putstr("enter initial vector: ");
+	read(1, opts->entered_iv, 100);
+	get_iv(opts, opts->entered_iv);
+	free(opts->entered_iv);
+}
+
 void	des_prep(t_opt opts)
 {
 	int		allocated;
@@ -77,8 +86,10 @@ void	des_prep(t_opt opts)
 		opts.entered_key = (char *)ft_memalloc(100);
 		ft_putstr("enter des key in hex: ");
 		read(1, opts.entered_key, 100);
-		allocated = 1;
+		allocated = 2;
 	}
+	if (opts.cmd->cbc && !opts.iv)
+		read_iv(&opts);
 	if (opts.cmd->ecb3 || opts.cmd->cbc3)
 	{
 		if (!get_keys3(&opts))
@@ -87,6 +98,6 @@ void	des_prep(t_opt opts)
 	else if (!get_key(&opts))
 		return ;
 	des(&opts);
-	if (allocated)
+	if (allocated == 2)
 		free(opts.entered_key);
 }
