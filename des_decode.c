@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des_decode.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 15:47:06 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/23 15:56:25 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/04/16 14:24:15 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void			des_ecb_decode(ssize_t size, t_opt opts)
 	while (i < size / 8)
 	{
 		res[i] = additional(msg, i, &opts, keys);
-		val = res[i] & 255;
+		val = ((res[i] & 255) > 8) ? 8 : res[i] & 255;
 		res[i] = reverse_bits(res[i]);
 		i++;
 	}
