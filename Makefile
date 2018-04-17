@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+         #
+#    By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2018/04/16 14:29:09 by Ulliwy           ###   ########.fr        #
+#    Updated: 2018/04/17 14:35:33 by iprokofy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,9 @@ SRC = main.c\
 		key_gen.c\
 		bit_permut.c\
 		des_decode.c\
-		des_encode.c
+		des_encode.c\
+		\
+		md5_prep.c
 FLAGS = -Wall -Wextra -Werror -O3 -flto -march=native -g -fsanitize=address
 
 all: $(NAME)

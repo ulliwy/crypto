@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ssl.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/04/16 17:23:02 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/04/17 14:51:35 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 # define FT_SSL_H
 
 # include "libft/libft.h"
+# include "ft_ssl_md5.h"
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <stdio.h>
 
-# define BUFF_SIZE	1
+# define BUFF_SIZE	1024*1024
 
 extern	unsigned char	g_pc1[];
 extern	unsigned char	g_pc2[];

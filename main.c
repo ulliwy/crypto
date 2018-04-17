@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/04/16 17:24:18 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/04/17 16:04:43 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int		get_iv(t_opt *opts, char *str)
 	return (1);
 }
 
-int		parse_opts2(char **av, int i, t_opt *opts)
+static int		parse_opts2(char **av, int i, t_opt *opts)
 {
 	if (av[i][1] == 'i')
 	{
@@ -83,7 +83,7 @@ int		parse_opts2(char **av, int i, t_opt *opts)
 	return (i + 1);
 }
 
-int		parse_opts(char **av, int i, t_opt *opts)
+static int		parse_opts(char **av, int i, t_opt *opts)
 {
 	if (av[i][0] == '-' && !av[i][2])
 	{
@@ -121,7 +121,7 @@ int		main(int argc, char **argv)
 	if (!parse_command(argv, &cmd))
 		return (err_usage_commands(argv[1]));
 	i = 2;
-	while (i < argc)
+	while (i < argc && !cmd.md5)
 	{
 		if (!(i = parse_opts(argv, i, &opts)) || i == -1 || i == -2)
 			return (err_usage(i));
@@ -131,6 +131,6 @@ int		main(int argc, char **argv)
 	else if (cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3)
 		des_prep(opts);
 	else if (cmd.md5)
-		md5();
+		md5(argc, argv);
 	return (0);
 }
