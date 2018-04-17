@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   buff_read.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 14:07:40 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/23 13:02:31 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/04/16 16:33:06 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*get_from_fd(int fd, ssize_t *r)
 	ssize_t		available;
 
 	available = BUFF_SIZE;
-	if (!(input = (char *)ft_memalloc(available)))
+	if (!(input = (char *)ft_memalloc(available + 64)))
 		return (NULL);
 	*r = 0;
 	while ((rd = read(fd, input + *r, available)))
@@ -31,7 +31,7 @@ char	*get_from_fd(int fd, ssize_t *r)
 		*r += rd;
 		if (!available)
 		{
-			new = (char *)ft_memalloc(BUFF_SIZE + (*r));
+			new = (char *)ft_memalloc(BUFF_SIZE + 64 + (*r));
 			ft_memcpy(new, input, *r);
 			free(input);
 			input = new;

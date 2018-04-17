@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ssl.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/03/26 16:19:48 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/04/16 17:23:02 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <fcntl.h>
 # include <stdio.h>
 
-# define BUFF_SIZE	1024*1024
+# define BUFF_SIZE	1
 
 extern	unsigned char	g_pc1[];
 extern	unsigned char	g_pc2[];
@@ -45,6 +45,7 @@ typedef struct			s_cmd
 	int					cbc;
 	int					ecb3;
 	int					cbc3;
+	int					md5;
 }						t_cmd;
 
 typedef struct			s_opt

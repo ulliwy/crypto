@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 15:33:44 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/26 16:13:35 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/04/16 17:24:37 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	cmd_init(t_cmd *cmd)
 	cmd->cbc = 0;
 	cmd->ecb3 = 0;
 	cmd->cbc3 = 0;
+	cmd->md5 = 0;
 }
 
 void	put_open_err(char *name)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   put_err.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 15:26:11 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/23 15:31:12 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/04/16 16:04:49 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int		err_usage_commands(char *cmd)
 	ft_putstr("ft_ssl: Error: '");
 	ft_putstr(cmd);
 	ft_putstr("' is an invalid command.\n\n");
-	ft_putstr("Standard commands:\n\nMessage Digest commands:\n\n");
+	ft_putstr("Standard commands:\n\n");
+	ft_putstr("Message Digest commands:\nmd5\nsha256\n\n");
 	ft_putstr("Cipher commands:\nbase64\ndes\ndes-ecb\ndec-cbc");
 	ft_putstr("\ndes3\ndes3-ecb\ndes3-cbc\n");
 	return (0);

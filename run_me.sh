@@ -70,7 +70,7 @@ fi
 
 printf "\n"
 
-# cbc
+# # cbc
 
 ./ft_ssl des-cbc -k 6162636461626364 -v 1122334455667788 -i bigtest -o tests/ecbc_1_1
 openssl des-cbc -K 6162636461626364 -iv 1122334455667788 -in bigtest -out tests/ecbc_1_2

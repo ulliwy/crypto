@@ -6,11 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2018/04/16 12:53:22 by Ulliwy           ###   ########.fr       */
-=======
-/*   Updated: 2018/03/26 16:26:51 by iprokofy         ###   ########.fr       */
->>>>>>> b2711e10f6efb959f01520705504c9e25fa64363
+/*   Updated: 2018/04/16 17:24:18 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +28,8 @@ int		parse_command(char **argv, t_cmd *cmd)
 		cmd->ecb3 = 1;
 	else if (!(ft_strcmp(argv[1], "des3-cbc")))
 		cmd->cbc3 = 1;
+	else if (!(ft_strcmp(argv[1], "md5")))
+		cmd->md5 = 1;
 	else
 		return (0);
 	return (1);
@@ -132,5 +130,7 @@ int		main(int argc, char **argv)
 		b64(&opts);
 	else if (cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3)
 		des_prep(opts);
+	else if (cmd.md5)
+		md5();
 	return (0);
 }
