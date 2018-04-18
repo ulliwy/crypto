@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   md5_prep.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/04/17 21:15:52 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/04/18 16:23:34 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,47 @@ int		md5_err_options(char opt)
 	return (0);
 }
 
-void			md5(char *msg, t_md5 *opts)
+void			md5(char *msg, ssize_t size, t_md5 *opts)
 {
+	int bit_size;
+	int new_size;
+	unsigned char *new;
+
+	new = (unsigned char*)msg;
+	bit_size = size * 8;
+	new_size = ((bit_size + 64) / 512) * 512 + 448;
+
+	printf("%lu %d %d\n", size, bit_size, new_size);
+
+	if (opts->s)
+	{
+		new = (unsigned char*)ft_memalloc(new_size / 8);
+		ft_strcpy((char*)new, msg);
+	}
+
+	new[size] = 128;
+	
+	size = 0;
+	int i = 0;
+	while (i < new_size / 8)
+	{
+		if (i && i % 8 == 0)
+			ft_putchar('\n');
+		if (i % 8 == 0)
+		{
+			ft_putnbr((i * 8) / 512);
+			ft_putchar(' ');
+		}
+		print_bits(new[i], 8);
+		ft_putchar(' ');
+		msg++;
+		i++;
+	}
+	if (opts->s)
+	{
+		free(new);
+		opts->s = 0;
+	}
 	return;
 }
 
@@ -39,9 +78,10 @@ static int		parse_opts(char **av, int i, t_md5 *opts)
 			opts->q = 1;
 		else if (av[i][1] == 'r')
 			opts->r = 1;
-		else if (av[i][1] == 's')
+		else if (av[i][1] == 's' && av[i + 1])
 		{
-			md5(av[i], opts);
+			opts->s = 1;
+			md5(av[i + 1], (ssize_t)ft_strlen(av[i + 1]), opts);
 			i++;
 		}
 		else if (av[i][1] == 'p')
@@ -58,6 +98,7 @@ void	md5_opts_init(t_md5 *opts)
 {
 	opts->q = 0;
 	opts->r = 0;
+	opts->s = 0;
 	opts->stdinn = NULL;
 }
 

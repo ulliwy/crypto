@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/04/17 14:51:35 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/04/18 16:23:07 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ unsigned long			des_decryption(unsigned long msg,
 							unsigned long keys[16], t_opt opts, int i);
 
 char					*get_from_fd(int fd, ssize_t *r);
-void					print_bits(unsigned long octet, int sep);
+void					print_bits(unsigned char octet, int sep);
 
 void					put_open_err(char *name);
 int						err_usage(int type);
