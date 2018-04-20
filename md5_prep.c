@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/04/18 16:23:34 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/04/20 14:46:43 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int		md5_err_options(char opt)
 
 void			md5(char *msg, ssize_t size, t_md5 *opts)
 {
-	int bit_size;
+	unsigned long bit_size;
 	int new_size;
 	unsigned char *new;
 
@@ -36,19 +36,39 @@ void			md5(char *msg, ssize_t size, t_md5 *opts)
 	bit_size = size * 8;
 	new_size = ((bit_size + 64) / 512) * 512 + 448;
 
-	printf("%lu %d %d\n", size, bit_size, new_size);
+	printf("%lu %lu %d\n", size, bit_size, new_size);
+	//print_bits_long(bit_size, 8);
+	
 
 	if (opts->s)
 	{
-		new = (unsigned char*)ft_memalloc(new_size / 8);
+		new = (unsigned char*)ft_memalloc(new_size / 8 + 8);
 		ft_strcpy((char*)new, msg);
 	}
 
+	// add '1' bit and pad by '0's
 	new[size] = 128;
+	print_bits_long(size, 8);
+	ft_putstr("\n\n");
+
+	// adding 64-bit size representation. low-ordered 4 bytes first
+	new[new_size / 8] = (char)(size >> (8 * 3));
+	new[new_size / 8 + 1] = (char)(size >> (8 * 2));
+	new[new_size / 8 + 2] = (char)(size >> 8);
+	new[new_size / 8 + 3] = (char)size;
+	new[new_size / 8 + 4] = (char)(size >> (8 * 7));
+	new[new_size / 8 + 5] = (char)(size >> (8 * 6));
+	new[new_size / 8 + 6] = (char)(size >> (8 * 5));
+	new[new_size / 8 + 7] = (char)(size >> (8 * 4));
+
+	// uint32_t AA = 0x67452301;
+	// uint32_t BB = 0xefcdab89;
+	// uint32_t CC = 0x98badcfe;
+	// uint32_t DD = 0x10325476;
 	
 	size = 0;
 	int i = 0;
-	while (i < new_size / 8)
+	while (i < new_size / 8 + 8)
 	{
 		if (i && i % 8 == 0)
 			ft_putchar('\n');
