@@ -24,4 +24,12 @@ typedef struct	s_md5
 	ssize_t		in_size;
 }				t_md5;
 
+typedef struct s_md5_buffer
+{
+	uint32_t a;
+	uint32_t b;
+	uint32_t c;
+	uint32_t d;
+}				t_md5_buffer;
+
 #endif
