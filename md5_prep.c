@@ -51,7 +51,7 @@ unsigned char *pad_msg(unsigned char *msg, ssize_t *size)
 	new_msg[*size] = 128;
 	add_size_representation(new_msg, *size, new_size);
 	*size = new_size;
-	free(msg);
+	//free(msg);
 	return (new_msg);
 }
 
@@ -67,40 +67,55 @@ uint32_t *init_buffer()
 	return (buf);
 }
 
-void	proceed_word(uint32_t word, t_md5_buf buf)
+uint32_t left_rotate(uint32_t x, int c)
+{
+	return (x << c) | (x >> (32 - c));
+}
+
+void	proceed_word(uint32_t *words, t_md5_buf *buf)
 {
 	int i;
 	uint32_t F;
 	uint32_t g;
 
+	i = 0;
 	while (i < 64)
 	{
 		if (i < 16)
 		{
-			F = buf[]
+			F = (buf->b & buf->c) | (~(buf->b) & buf->d);
+			g = i;
 		}
 		else if (i < 32)
 		{
-
+			F = (buf->d & buf->b) | (~(buf->d) & buf->c);
+			g = (5 * i + 1) % 16;
 		}
 		else if (i < 48)
 		{
-
+			F = buf->b ^ buf->c ^ buf->d;
+			g = (3 * i + 5) % 16;
 		}
 		else if (i < 64)
 		{
-
+			F = buf->c ^ (buf->b | ~(buf->d));
+			g = (7 * i) % 16;
 		}
+		F = F + buf->a + g_md5_K[i] + words[g];
+		buf->a = buf->d;
+		buf->d = buf->c;
+		buf->c = buf->b;
+		buf->b = buf->b + left_rotate(F, g_md5_s[i]);
+		i++;
 	}
 }
 
 void	proceed_chunk(unsigned char *chunk, uint32_t *buffer)
 {
 	uint32_t *words;
-	t_md5_buffer cur_buf;
+	t_md5_buf cur_buf;
 	int i;
 
-	cur_buf = (uint32_t *)malloc(4 * sizeof(uint32_t));
 	cur_buf.a = buffer[0];
 	cur_buf.b = buffer[1];
 	cur_buf.c = buffer[2];
@@ -110,7 +125,11 @@ void	proceed_chunk(unsigned char *chunk, uint32_t *buffer)
 	i = 0;
 	while (i < 16)
 	{
-		cur_buf = proceed_word(words[i], cur_buf);
+		proceed_word(words, &cur_buf);
+		buffer[0] = buffer[0] + cur_buf.a;
+		buffer[1] = buffer[1] + cur_buf.b;
+		buffer[2] = buffer[2] + cur_buf.c;
+		buffer[3] = buffer[3] + cur_buf.d;
 		i++;
 	}
 }
@@ -127,9 +146,9 @@ void	md5(unsigned char *msg, ssize_t size)
 	while (i < size / 512)
 	{
 		proceed_chunk(msg + i * 512, buffer);
-		i += 512;
+		i++;
 	}
-
+	printf("%x %x %x %x\n", buffer[0], buffer[1],buffer[2], buffer[3]);
 	free(msg);
 	free(buffer);
 	// unsigned long bit_size;
@@ -230,14 +249,17 @@ static int		parse_opts(char **av, int i, t_md5 *opts)
 		else if (av[i][1] == 's' && av[i + 1])
 		{
 			opts->s = 1;
-			md5((unsigned char *)av[i + 1], (ssize_t)ft_strlen(av[i + 1]));
+			opts->input = (unsigned char *)av[i + 1];
+			opts->in_size = (ssize_t)ft_strlen(av[i + 1]);
 			i++;
 		}
 		else if (av[i][1] == 'p')
-			opts->stdinn = get_from_fd(0, &(opts->in_size));
+			opts->p = 1;
 		else
 			return (md5_err_options(av[i][1]));
 	}
+	else if (!opts->filename)
+		opts->filename = av[i];
 	else
 		return (0);
 	return (i + 1);
@@ -248,7 +270,9 @@ void	md5_opts_init(t_md5 *opts)
 	opts->q = 0;
 	opts->r = 0;
 	opts->s = 0;
-	opts->stdinn = NULL;
+	opts->p = 0;
+	opts->filename = NULL;
+	opts->input = NULL;
 }
 
 int		md5_prep(int argc, char **argv)
@@ -263,5 +287,8 @@ int		md5_prep(int argc, char **argv)
 		if (!(i = parse_opts(argv, i, &opts)))
 			return (md5_err_usage());
 	}
+	md5(opts.input, opts.in_size);
+	if (!opts.s)
+		free(opts.input);
 	return (0);
 }

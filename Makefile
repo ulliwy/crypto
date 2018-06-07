@@ -25,7 +25,8 @@ SRC = main.c\
 		des_decode.c\
 		des_encode.c\
 		\
-		md5_prep.c
+		md5_prep.c\
+		md5_tables.c
 FLAGS = -Wall -Wextra -Werror -O3 -flto -march=native -g -fsanitize=address
 
 all: $(NAME)

@@ -13,23 +13,28 @@
 #ifndef FT_SSL_MD5_H
 # define FT_SSL_MD5_H
 
+extern const int g_md5_s[];
+extern const int g_md5_K[];
+
 int			md5_prep(int argc, char **argv);
 
-typedef struct	s_md5
+typedef struct		s_md5
 {
-	int			q;
-	int			r;
-	int			s;
-	char		*stdinn;
-	ssize_t		in_size;
-}				t_md5;
+	int				q;
+	int				r;
+	int				s;
+	int 			p;
+	char			*filename;
+	unsigned char	*input;
+	ssize_t			in_size;
+}					t_md5;
 
-typedef struct s_md5_buffer
+typedef struct s_md5_buf
 {
 	uint32_t a;
 	uint32_t b;
 	uint32_t c;
 	uint32_t d;
-}				t_md5_buffer;
+}				t_md5_buf;
 
 #endif
