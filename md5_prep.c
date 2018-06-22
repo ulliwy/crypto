@@ -28,14 +28,14 @@ int		md5_err_options(char opt)
 
 void add_size_representation(unsigned char *msg, ssize_t size, ssize_t new_size)
 {
-	msg[new_size / 8] = (char)(size >> (8 * 3));
-	msg[new_size / 8 + 1] = (char)(size >> (8 * 2));
-	msg[new_size / 8 + 2] = (char)(size >> 8);
-	msg[new_size / 8 + 3] = (char)size;
-	msg[new_size / 8 + 4] = (char)(size >> (8 * 7));
-	msg[new_size / 8 + 5] = (char)(size >> (8 * 6));
-	msg[new_size / 8 + 6] = (char)(size >> (8 * 5));
-	msg[new_size / 8 + 7] = (char)(size >> (8 * 4));
+	msg[new_size / 8 - 1] = (char)(size >> (8 * 7));
+	msg[new_size / 8 - 2] = (char)(size >> (8 * 6));
+	msg[new_size / 8 - 3] = (char)(size >> (8 * 5));
+	msg[new_size / 8 - 4] = (char)(size >> (8 * 4));
+	msg[new_size / 8 - 5] = (char)(size >> (8 * 3));
+	msg[new_size / 8 - 6] = (char)(size >> (8 * 2));
+	msg[new_size / 8 - 7] = (char)(size >> (8 * 1));
+	msg[new_size / 8 - 8] = (char)(size >> (8 * 0));
 }
 
 unsigned char *pad_msg(unsigned char *msg, ssize_t *size)
@@ -45,12 +45,13 @@ unsigned char *pad_msg(unsigned char *msg, ssize_t *size)
 	unsigned char *new_msg;
 
 	bit_size = (*size) * 8;
-	new_size = ((bit_size + 64) / 512) * 512 + 448;
+	new_size = ((bit_size + 64) / 512) * 512 + 448 + 8 * 8;
 	new_msg = (unsigned char *)ft_memalloc(new_size / 8 + 8);
 	ft_strcpy((char *)new_msg, (char *)msg);
 	new_msg[*size] = 128;
+	printf("%lu %lu\n", *size, new_size);
 	add_size_representation(new_msg, *size, new_size);
-	*size = new_size;
+	*size = new_size / 8;
 	//free(msg);
 	return (new_msg);
 }
@@ -139,7 +140,18 @@ void	md5(unsigned char *msg, ssize_t size)
 	int i;
 	uint32_t *buffer;
 
+	//printf("size: %lu", size);
 	msg = pad_msg(msg, &size);
+	printf("size: %lu", size);
+	for (int i = 0; i < size; i++)
+	{
+		if (i != 0 && i % 64 == 0)
+			write(1, "\n", 1);
+		if (i != 0 && i % 8 == 0)
+			write(1, "\n", 1);
+		print_bits(msg[i], 8);
+		write(1, " ", 1);
+	}
 	buffer = init_buffer();
 
 	i = 0;
@@ -148,7 +160,7 @@ void	md5(unsigned char *msg, ssize_t size)
 		proceed_chunk(msg + i * 512, buffer);
 		i++;
 	}
-	printf("%x %x %x %x\n", buffer[0], buffer[1],buffer[2], buffer[3]);
+	printf("\n%x %x %x %x\n", buffer[0], buffer[1],buffer[2], buffer[3]);
 	free(msg);
 	free(buffer);
 	// unsigned long bit_size;
