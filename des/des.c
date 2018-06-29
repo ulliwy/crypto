@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   des.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/26 16:29:34 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/06/28 17:27:13 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
+#include "../ft_ssl.h"
 
 void	create_subkeys(unsigned long k, unsigned long keys[16])
 {

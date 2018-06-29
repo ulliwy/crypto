@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_ssl_md5.h                                       :+:      :+:    :+:   */
+/*   ft_md5.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/04/18 13:47:14 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/06/28 21:12:52 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_SSL_MD5_H
-# define FT_SSL_MD5_H
+#ifndef FT_MD5_H
+# define FT_MD5_H
 
 extern const int g_md5_s[];
 extern const int g_md5_K[];
@@ -25,6 +25,7 @@ typedef struct		s_md5
 	int				s;
 	int 			p;
 	char			*filename;
+	unsigned char	*str;
 	unsigned char	*input;
 	ssize_t			in_size;
 }					t_md5;

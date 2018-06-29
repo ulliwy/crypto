@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   des_encode.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 15:47:06 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/23 15:56:38 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/06/28 17:27:21 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
+#include "../ft_ssl.h"
 
 unsigned long	half_permut(unsigned long temp, unsigned long keys[16])
 {

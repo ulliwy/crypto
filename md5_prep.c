@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/06/28 16:01:57 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/06/28 21:15:37 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ uint32_t left_rotate(uint32_t x, int c)
 	return (x << c) | (x >> (32 - c));
 }
 
-void	proceed_chunk(unsigned char *chunk, uint32_t *buffer) // 16 words
+void	process_chunk(unsigned char *chunk, uint32_t *buffer) // 16 words
 {
 	uint32_t *words;
 	t_md5_buf buf;
@@ -98,7 +98,7 @@ void	proceed_chunk(unsigned char *chunk, uint32_t *buffer) // 16 words
 		buf.d = buf.c;
 		buf.c = buf.b;
 		buf.b = buf.b + left_rotate(F, g_md5_s[i]);
-		printf("%d A: %u, B: %u, C: %u, D: %u\n", i, buf.a, buf.b, buf.c, buf.d);
+		//printf("%d A: %u, B: %u, C: %u, D: %u\n", i, buf.a, buf.b, buf.c, buf.d);
 		i++;
 	}
 	buffer[0] = buffer[0] + buf.a;
@@ -125,16 +125,24 @@ unsigned char *pad_msg(unsigned char *msg, ssize_t *size)
 	return (new_msg);
 }
 
-void	print_hex(uint32_t *buffer)
+void	print_hex(uint32_t c)
+{
+	char	base[17] = "0123456789abcdef";
+
+	ft_putchar(base[c / 16]);
+	ft_putchar(base[c % 16]);
+}
+
+void	print_hash(uint32_t *buffer)
 {
 	int i = 0;
 
 	while (i < 4)
 	{
-		printf("%02x", (buffer[i] & 0xFF));
-		printf("%02x", ((buffer[i] & 0xFF00) >> 8));
-		printf("%02x", ((buffer[i] & 0xFF0000) >> 8 * 2));
-		printf("%02x", ((buffer[i] & 0xFF000000) >> 8 * 3));
+		print_hex(buffer[i] & 0xFF);
+		print_hex((buffer[i] & 0xFF00) >> 8);
+		print_hex((buffer[i] & 0xFF0000) >> 8 * 2);
+		print_hex((buffer[i] & 0xFF000000) >> 8 * 3);
 		i++;
 	}
 	printf("\n");
@@ -147,114 +155,15 @@ void	md5(unsigned char *msg, ssize_t size)
 
 	//printf("size: %lu", size);
 	msg = pad_msg(msg, &size);
-	//printf("size: %lu", size);
-	//printf("%s\n", msg);
-	// for (int i = 0; i < size; i++)
-	// {
-	// 	// if (i != 0 && i % 64 == 0)
-	// 	//  	printf("\n");
-	// 	// if (i != 0 && i % 8 == 0)
-	// 	//  	printf("\n");
-	// 	printf("%d %d\n", i, msg[i]);
-	// 	// print_bits(msg[i], 8);
-	// 	// write(1, " ", 1);
-	// }
 	buffer = init_buffer();
 	i = 0;
 	while (i < size / 64)
 	{
-		printf("chunk %d\n", i);
-		proceed_chunk(msg + i * 4, buffer);
+		process_chunk(msg + i * 64, buffer);
 		i++;
 	}
-	printf("\nA: %u, B: %u, C: %u, D: %u\n", buffer[0], buffer[1], buffer[2], buffer[3]);
-	print_hex(buffer);
-	// free(msg);
-	// free(buffer);
-	// unsigned long bit_size;
-	// int new_size;
-	// unsigned char *new;
-	// int i;
-	// int k;
-
-	// new = (unsigned char*)msg;
-	// bit_size = size * 8;
-	// new_size = ((bit_size + 64) / 512) * 512 + 448;
-
-	// printf("%lu %lu %d\n", size, bit_size, new_size);
-	// //print_bits_long(bit_size, 8);
-	
-	// // padding
-	// if (opts->s)
-	// {
-	// 	new = (unsigned char*)ft_memalloc(new_size / 8 + 8);
-	// 	ft_strcpy((char*)new, msg);
-	// }
-
-	// // add '1' bit and pad by '0's
-	// new[size] = 128;
-	// print_bits_long(size, 8);
-	// ft_putstr("\n\n");
-
-	// // adding 64-bit size representation. low-ordered 4 bytes first
-	// new[new_size / 8] = (char)(size >> (8 * 3));
-	// new[new_size / 8 + 1] = (char)(size >> (8 * 2));
-	// new[new_size / 8 + 2] = (char)(size >> 8);
-	// new[new_size / 8 + 3] = (char)size;
-	// new[new_size / 8 + 4] = (char)(size >> (8 * 7));
-	// new[new_size / 8 + 5] = (char)(size >> (8 * 6));
-	// new[new_size / 8 + 6] = (char)(size >> (8 * 5));
-	// new[new_size / 8 + 7] = (char)(size >> (8 * 4));
-
-	// uint32_t *buffer = malloc()
-	// uint32_t AA = 0x67452301;
-	// uint32_t BB = 0xefcdab89;
-	// uint32_t CC = 0x98badcfe;
-	// uint32_t DD = 0x10325476;
-	
-	// uint32_t X[16];
-	// uint32_t Y;
-	// uint32_t Z;
-
-	// uint32_t *blocks = (uint32_t*)new;
-
-	// i = 0;
-	// while (i < new_size / 16)
-	// {
-	// 	j = 0;
-	// 	while (j < 16)
-	// 	{
-	// 		X[j] = blocks[];
-	// 	}
-	// 	i += 16;
-	// }
-
-
-
-
-
-
-	// size = 0;
-	// i = 0;
-	// while (i < new_size / 8 + 8)
-	// {
-	// 	if (i && i % 8 == 0)
-	// 		ft_putchar('\n');
-	// 	if (i % 8 == 0)
-	// 	{
-	// 		ft_putnbr((i * 8) / 512);
-	// 		ft_putchar(' ');
-	// 	}
-	// 	print_bits(new[i], 8);
-	// 	ft_putchar(' ');
-	// 	msg++;
-	// 	i++;
-	// }
-	// if (opts->s)
-	// {
-	// 	free(new);
-	// 	opts->s = 0;
-	// }
+	//printf("\nresult:\nA: %u, B: %u, C: %u, D: %u\n", buffer[0], buffer[1], buffer[2], buffer[3]);
+	print_hash(buffer);
 	return;
 }
 
@@ -269,7 +178,7 @@ static int		parse_opts(char **av, int i, t_md5 *opts)
 		else if (av[i][1] == 's' && av[i + 1])
 		{
 			opts->s = 1;
-			opts->input = (unsigned char *)av[i + 1];
+			opts->str = (unsigned char *)av[i + 1];
 			opts->in_size = (ssize_t)ft_strlen(av[i + 1]);
 			i++;
 		}
@@ -292,6 +201,7 @@ void	md5_opts_init(t_md5 *opts)
 	opts->s = 0;
 	opts->p = 0;
 	opts->filename = NULL;
+	opts->str = NULL;
 	opts->input = NULL;
 }
 
@@ -307,7 +217,7 @@ int		md5_prep(int argc, char **argv)
 		if (!(i = parse_opts(argv, i, &opts)))
 			return (md5_err_usage());
 	}
-	md5(opts.input, opts.in_size);
+	md5(opts.str, opts.in_size);
 	if (!opts.s)
 		free(opts.input);
 	return (0);

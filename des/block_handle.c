@@ -6,11 +6,11 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/07 12:43:49 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/04/16 16:33:32 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/06/28 17:27:09 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
+#include "../ft_ssl.h"
 
 unsigned long	reverse_bits(unsigned long msg)
 {

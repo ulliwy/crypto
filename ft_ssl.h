@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ssl.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/04/20 13:02:28 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/06/28 21:12:14 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define FT_SSL_H
 
 # include "libft/libft.h"
-# include "ft_ssl_md5.h"
+# include "ft_md5.h"
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>

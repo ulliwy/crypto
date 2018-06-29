@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   key_gen.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 15:38:33 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/23 15:57:10 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/06/28 17:27:32 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
+#include "../ft_ssl.h"
 
 int				get_value(char *c)
 {

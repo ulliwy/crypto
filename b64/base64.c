@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   base64.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 11:23:32 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/03/23 15:54:20 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/06/28 17:26:55 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
+#include "../ft_ssl.h"
 
 unsigned char	*remove_spaces(unsigned char *in, ssize_t *size)
 {
