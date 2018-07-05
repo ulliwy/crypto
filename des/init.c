@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 15:33:44 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/06/28 17:27:28 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/05 14:26:35 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,25 +53,4 @@ void	cmd_init(t_cmd *cmd)
 	cmd->ecb3 = 0;
 	cmd->cbc3 = 0;
 	cmd->md5 = 0;
-}
-
-void	put_open_err(char *name)
-{
-	char	*err_msg;
-	int		len;
-
-	len = ft_strlen(name);
-	err_msg = (char *)ft_memalloc(len + 18);
-	ft_strcpy(err_msg, "Unable to open \'");
-	ft_strcpy(err_msg + 16, name);
-	err_msg[16 + len] = '\'';
-	perror(err_msg);
-	free(err_msg);
-}
-
-int		put_key_err(void)
-{
-	ft_putstr("non-hex digit\n");
-	ft_putstr("invalid hex key value\n");
-	return (0);
 }

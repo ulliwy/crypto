@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/06/28 21:15:37 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/05 15:32:07 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,9 +133,25 @@ void	print_hex(uint32_t c)
 	ft_putchar(base[c % 16]);
 }
 
-void	print_hash(uint32_t *buffer)
+void	print_hash(uint32_t *buffer, t_md5 *opts)
 {
 	int i = 0;
+
+	if (opts->p)
+		write(1, opts->input, opts->input_size);
+
+	if (opts->str && !opts->q)
+	{
+		write(1, "MD5 (\"", 6);
+		write(1, opts->str, opts->str_len);
+		write(1, "\") = ", 5);
+	}
+	else if (!opts->q && opts->filename)
+	{
+		write(1, "MD5 (", 5);
+		write(1, opts->filename, ft_strlen(opts->filename));
+		write(1, ") = ", 4);
+	}
 
 	while (i < 4)
 	{
@@ -148,12 +164,11 @@ void	print_hash(uint32_t *buffer)
 	printf("\n");
 }
 
-void	md5(unsigned char *msg, ssize_t size)
+void	md5(unsigned char *msg, ssize_t size, t_md5 *opts)
 {
 	int i;
 	uint32_t *buffer;
 
-	//printf("size: %lu", size);
 	msg = pad_msg(msg, &size);
 	buffer = init_buffer();
 	i = 0;
@@ -162,35 +177,45 @@ void	md5(unsigned char *msg, ssize_t size)
 		process_chunk(msg + i * 64, buffer);
 		i++;
 	}
-	//printf("\nresult:\nA: %u, B: %u, C: %u, D: %u\n", buffer[0], buffer[1], buffer[2], buffer[3]);
-	print_hash(buffer);
-	return;
+	print_hash(buffer, opts);
 }
 
-static int		parse_opts(char **av, int i, t_md5 *opts)
+static int		parse_opts(char **av, int i, t_md5 *opts, int *parsed)
 {
 	if (av[i][0] == '-' && !av[i][2])
 	{
 		if (av[i][1] == 'q')
+		{
 			opts->q = 1;
+			opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
+			md5(opts->input, opts->input_size, opts);
+			free(opts->input);
+		}
 		else if (av[i][1] == 'r')
 			opts->r = 1;
 		else if (av[i][1] == 's' && av[i + 1])
 		{
-			opts->s = 1;
 			opts->str = (unsigned char *)av[i + 1];
-			opts->in_size = (ssize_t)ft_strlen(av[i + 1]);
+			opts->str_len = (ssize_t)ft_strlen(av[i + 1]);
+			md5(opts->str, opts->str_len, opts);
+			opts->str = NULL;
 			i++;
 		}
 		else if (av[i][1] == 'p')
+		{
 			opts->p = 1;
+			opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
+			md5(opts->input, opts->input_size, opts);
+			free(opts->input);
+		}
 		else
 			return (md5_err_options(av[i][1]));
 	}
-	else if (!opts->filename)
-		opts->filename = av[i];
 	else
-		return (0);
+	{
+		*parsed = i;
+		return (1);
+	}
 	return (i + 1);
 }
 
@@ -198,27 +223,61 @@ void	md5_opts_init(t_md5 *opts)
 {
 	opts->q = 0;
 	opts->r = 0;
-	opts->s = 0;
+	//opts->s = 0;
 	opts->p = 0;
 	opts->filename = NULL;
+
 	opts->str = NULL;
+	//opts->str_len = 0;
+
 	opts->input = NULL;
+	opts->input_size = 0;
+}
+
+void	hash_file(char *file_name, t_md5 *opts)
+{
+	int fd;
+
+	fd = open(file_name, O_RDONLY);
+	if (fd == -1)
+		return (hash_open_err(file_name, "md5", 3));
+	opts->input = (unsigned char *)get_from_fd(fd, &(opts->input_size));
+	md5(opts->input, opts->input_size, opts);
+	free(opts->input);
+	close(fd);
 }
 
 int		md5_prep(int argc, char **argv)
 {
 	int 	i;
 	t_md5	opts;
+	int 	parsed;
 
 	md5_opts_init(&opts);
 	i = 2;
-	while (i < argc)
+	parsed = 0;
+	while (i < argc && !parsed)
 	{
-		if (!(i = parse_opts(argv, i, &opts)))
+		i = parse_opts(argv, i, &opts, &parsed);
+		if (i == 0)
 			return (md5_err_usage());
 	}
-	md5(opts.str, opts.in_size);
-	if (!opts.s)
+	while (parsed && parsed < argc)
+	{
+		opts.filename = argv[parsed];
+		hash_file(argv[parsed], &opts);
+		parsed++;
+	}
+	if (!parsed && !opts.p && !opts.q)
+	{
+		opts.input = (unsigned char *)get_from_fd(0, &(opts.input_size));
+		md5(opts.input, opts.input_size, &opts);
 		free(opts.input);
+	}
+	
+	//md5(opts.str, opts.in_size);
+	//if (!opts.p)
+	//	free(opts.input);
 	return (0);
+	// return 1 in case of error
 }
