@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/05 14:45:38 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/05 18:20:36 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,16 @@ typedef struct		s_md5
 {
 	int				q;
 	int				r;
-	//int				s;
+	int				s;
 	int 			p;
+	int 			pp;
 	char			*filename;
 	unsigned char	*str;
 	ssize_t			str_len;
 	unsigned char	*input;
 	ssize_t			input_size;
+	unsigned char 	*from_file;
+	ssize_t 		file_size;
 }					t_md5;
 
 typedef struct s_md5_buf

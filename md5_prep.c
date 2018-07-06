@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/05 15:32:07 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/05 18:21:32 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,16 +137,19 @@ void	print_hash(uint32_t *buffer, t_md5 *opts)
 {
 	int i = 0;
 
-	if (opts->p)
+	if (opts->pp)
+	{
 		write(1, opts->input, opts->input_size);
+		opts->pp = 0;
+	}
 
-	if (opts->str && !opts->q)
+	if (opts->str && !opts->q && !opts->r)
 	{
 		write(1, "MD5 (\"", 6);
 		write(1, opts->str, opts->str_len);
 		write(1, "\") = ", 5);
 	}
-	else if (!opts->q && opts->filename)
+	else if (!opts->q && opts->filename && !opts->r)
 	{
 		write(1, "MD5 (", 5);
 		write(1, opts->filename, ft_strlen(opts->filename));
@@ -161,13 +164,28 @@ void	print_hash(uint32_t *buffer, t_md5 *opts)
 		print_hex((buffer[i] & 0xFF000000) >> 8 * 3);
 		i++;
 	}
-	printf("\n");
+
+	if (opts->r && opts->str && !opts->q)
+	{
+		write(1, " \"", 2);
+		write(1, opts->str, opts->str_len);
+		write(1, "\"", 1);
+	}
+	else if (!opts->q && opts->filename && opts->r)
+	{
+		write(1, " ", 1);
+		write(1, opts->filename, ft_strlen(opts->filename));
+	}
+
+	write(1, "\n", 1);
 }
 
 void	md5(unsigned char *msg, ssize_t size, t_md5 *opts)
 {
 	int i;
 	uint32_t *buffer;
+
+	//printf("<%s>\n",msg );
 
 	msg = pad_msg(msg, &size);
 	buffer = init_buffer();
@@ -187,14 +205,16 @@ static int		parse_opts(char **av, int i, t_md5 *opts, int *parsed)
 		if (av[i][1] == 'q')
 		{
 			opts->q = 1;
-			opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
-			md5(opts->input, opts->input_size, opts);
-			free(opts->input);
+			opts->r = 0;
+			// opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
+			// md5(opts->input, opts->input_size, opts);
+			// free(opts->input);
 		}
 		else if (av[i][1] == 'r')
 			opts->r = 1;
 		else if (av[i][1] == 's' && av[i + 1])
 		{
+			opts->s = 1;
 			opts->str = (unsigned char *)av[i + 1];
 			opts->str_len = (ssize_t)ft_strlen(av[i + 1]);
 			md5(opts->str, opts->str_len, opts);
@@ -204,9 +224,11 @@ static int		parse_opts(char **av, int i, t_md5 *opts, int *parsed)
 		else if (av[i][1] == 'p')
 		{
 			opts->p = 1;
+			opts->pp = 1;
 			opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
 			md5(opts->input, opts->input_size, opts);
 			free(opts->input);
+			//opts->input = NULL;
 		}
 		else
 			return (md5_err_options(av[i][1]));
@@ -223,8 +245,9 @@ void	md5_opts_init(t_md5 *opts)
 {
 	opts->q = 0;
 	opts->r = 0;
-	//opts->s = 0;
+	opts->s = 0;
 	opts->p = 0;
+	opts->pp = 0;
 	opts->filename = NULL;
 
 	opts->str = NULL;
@@ -232,6 +255,9 @@ void	md5_opts_init(t_md5 *opts)
 
 	opts->input = NULL;
 	opts->input_size = 0;
+
+	opts->from_file = NULL;
+	opts->file_size = 0;
 }
 
 void	hash_file(char *file_name, t_md5 *opts)
@@ -241,9 +267,9 @@ void	hash_file(char *file_name, t_md5 *opts)
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)
 		return (hash_open_err(file_name, "md5", 3));
-	opts->input = (unsigned char *)get_from_fd(fd, &(opts->input_size));
-	md5(opts->input, opts->input_size, opts);
-	free(opts->input);
+	opts->from_file = (unsigned char *)get_from_fd(fd, &(opts->file_size));
+	md5(opts->from_file, opts->file_size, opts);
+	free(opts->from_file);
 	close(fd);
 }
 
@@ -268,7 +294,7 @@ int		md5_prep(int argc, char **argv)
 		hash_file(argv[parsed], &opts);
 		parsed++;
 	}
-	if (!parsed && !opts.p && !opts.q)
+	if (!opts.p && ((!parsed && !opts.s) || opts.q))
 	{
 		opts.input = (unsigned char *)get_from_fd(0, &(opts.input_size));
 		md5(opts.input, opts.input_size, &opts);
