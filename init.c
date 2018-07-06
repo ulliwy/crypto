@@ -6,11 +6,11 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 15:33:44 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/05 14:26:35 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/06 15:17:21 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_ssl.h"
+#include "./ft_ssl.h"
 
 char	giv(char c)
 {
@@ -52,5 +52,5 @@ void	cmd_init(t_cmd *cmd)
 	cmd->cbc = 0;
 	cmd->ecb3 = 0;
 	cmd->cbc3 = 0;
-	cmd->md5 = 0;
+	cmd->hashing = -1;
 }

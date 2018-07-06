@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/04/17 21:11:06 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/06 15:57:29 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ int		parse_command(char **argv, t_cmd *cmd)
 	else if (!(ft_strcmp(argv[1], "des3-cbc")))
 		cmd->cbc3 = 1;
 	else if (!(ft_strcmp(argv[1], "md5")))
-		cmd->md5 = 1;
+		cmd->hashing = 0;
+	else if (!(ft_strcmp(argv[1], "sha256")))
+		cmd->hashing = 1;
 	else
 		return (0);
 	return (1);
@@ -121,7 +123,7 @@ int		main(int argc, char **argv)
 	if (!parse_command(argv, &cmd))
 		return (err_usage_commands(argv[1]));
 	i = 2;
-	while (i < argc && !cmd.md5)
+	while (i < argc && cmd.hashing == -1)
 	{
 		if (!(i = parse_opts(argv, i, &opts)) || i == -1 || i == -2)
 			return (err_usage(i));
@@ -130,7 +132,7 @@ int		main(int argc, char **argv)
 		b64(&opts);
 	else if (cmd.ecb || cmd.cbc || cmd.ecb3 || cmd.cbc3)
 		des_prep(opts);
-	else if (cmd.md5)
-		md5_prep(argc, argv);
+	else if (cmd.hashing != -1)
+		hash_prep(argc, argv, cmd.hashing);
 	return (0);
 }

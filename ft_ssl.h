@@ -6,19 +6,18 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/06/28 21:12:14 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/06 15:58:49 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_SSL_H
 # define FT_SSL_H
 
-# include "libft/libft.h"
-# include "ft_md5.h"
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <stdio.h>
+# include "libft/libft.h"
 
 # define BUFF_SIZE	1024*1024
 
@@ -46,7 +45,7 @@ typedef struct			s_cmd
 	int					cbc;
 	int					ecb3;
 	int					cbc3;
-	int					md5;
+	int					hashing;
 }						t_cmd;
 
 typedef struct			s_opt
@@ -104,5 +103,7 @@ int						err_usage_commands(char *cmd);
 int						put_iv_err(int type);
 void					*put_stream_err(void);
 int						put_key_err(void);
+
+int						hash_prep(int argc, char **argv, int func_id);
 
 #endif

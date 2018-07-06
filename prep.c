@@ -1,16 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   md5_prep.c                                         :+:      :+:    :+:   */
+/*   prep.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/05 21:08:39 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/06 16:19:51 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ssl.h"
+#include "ft_hash.h"
+
+void (*hash_func[2])(unsigned char *msg, ssize_t size, t_hash *opts) =
+{
+	&md5,
+	&sha256
+};
 
 int		md5_err_usage()
 {
@@ -108,7 +114,7 @@ void	process_chunk(unsigned char *chunk, uint32_t *buffer) // 16 words
 	buffer[3] = buffer[3] + buf.d;
 }
 
-unsigned char *pad_msg(unsigned char *msg, ssize_t *size)
+unsigned char *md5_pad_msg(unsigned char *msg, ssize_t *size)
 {
 	ssize_t bit_size;
 	ssize_t new_size;
@@ -134,7 +140,7 @@ void	print_hex(uint32_t c)
 	ft_putchar(base[c % 16]);
 }
 
-void	print_hash(uint32_t *buffer, t_md5 *opts)
+void	print_hash(uint32_t *buffer, t_hash *opts)
 {
 	int i = 0;
 
@@ -181,12 +187,12 @@ void	print_hash(uint32_t *buffer, t_md5 *opts)
 	write(1, "\n", 1);
 }
 
-void	md5(unsigned char *msg, ssize_t size, t_md5 *opts)
+void	md5(unsigned char *msg, ssize_t size, t_hash *opts)
 {
 	int i;
 	uint32_t *buffer;
 
-	msg = pad_msg(msg, &size);
+	msg = md5_pad_msg(msg, &size);
 	buffer = init_buffer();
 	i = 0;
 	while (i < size / 64)
@@ -197,7 +203,7 @@ void	md5(unsigned char *msg, ssize_t size, t_md5 *opts)
 	print_hash(buffer, opts);
 }
 
-static int		parse_opts(char **av, int i, t_md5 *opts, int *parsed)
+static int		parse_opts(char **av, int i, t_hash *opts, int *parsed)
 {
 	if (av[i][0] == '-' && !av[i][2])
 	{
@@ -213,7 +219,7 @@ static int		parse_opts(char **av, int i, t_md5 *opts, int *parsed)
 			opts->s = 1;
 			opts->str = (unsigned char *)av[i + 1];
 			opts->str_len = (ssize_t)ft_strlen(av[i + 1]);
-			md5(opts->str, opts->str_len, opts);
+			(hash_func[opts->id])(opts->str, opts->str_len, opts);
 			opts->str = NULL;
 			i++;
 		}
@@ -222,7 +228,7 @@ static int		parse_opts(char **av, int i, t_md5 *opts, int *parsed)
 			opts->p = 1;
 			opts->pp = 1;
 			opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
-			md5(opts->input, opts->input_size, opts);
+			(hash_func[opts->id])(opts->input, opts->input_size, opts);
 			free(opts->input);
 		}
 		else
@@ -236,8 +242,9 @@ static int		parse_opts(char **av, int i, t_md5 *opts, int *parsed)
 	return (i + 1);
 }
 
-void	md5_opts_init(t_md5 *opts)
+void	hash_opts_init(t_hash *opts, int func_id)
 {
+	opts->id = func_id;
 	opts->q = 0;
 	opts->r = 0;
 	opts->s = 0;
@@ -246,7 +253,6 @@ void	md5_opts_init(t_md5 *opts)
 	opts->filename = NULL;
 
 	opts->str = NULL;
-	//opts->str_len = 0;
 
 	opts->input = NULL;
 	opts->input_size = 0;
@@ -255,7 +261,7 @@ void	md5_opts_init(t_md5 *opts)
 	opts->file_size = 0;
 }
 
-void	hash_file(char *file_name, t_md5 *opts)
+void	hash_file(char *file_name, t_hash *opts)
 {
 	int fd;
 
@@ -270,19 +276,19 @@ void	hash_file(char *file_name, t_md5 *opts)
 	}
 	else
 	{
-		md5(opts->from_file, opts->file_size, opts);
+		(hash_func[opts->id])(opts->from_file, opts->file_size, opts);
 		free(opts->from_file);
 	}
 	close(fd);
 }
 
-int		md5_prep(int argc, char **argv)
+int			hash_prep(int argc, char **argv, int func_id)
 {
 	int 	i;
-	t_md5	opts;
+	t_hash	opts;
 	int 	parsed;
 
-	md5_opts_init(&opts);
+	hash_opts_init(&opts, func_id);
 	i = 2;
 	parsed = 0;
 	while (i < argc && !parsed)
@@ -300,7 +306,7 @@ int		md5_prep(int argc, char **argv)
 	if (!opts.p && !opts.s && !parsed)
 	{
 		opts.input = (unsigned char *)get_from_fd(0, &(opts.input_size));
-		md5(opts.input, opts.input_size, &opts);
+		(hash_func[opts.id])(opts.input, opts.input_size, &opts);
 		free(opts.input);
 	}
 	return (0);

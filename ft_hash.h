@@ -1,28 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_md5.h                                           :+:      :+:    :+:   */
+/*   ft_hash.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/05 20:39:43 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/06 16:20:15 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_MD5_H
-# define FT_MD5_H
+#ifndef FT_HASH_H
+# define FT_HASH_H
 
-#include <errno.h>
+# include <errno.h>
+# include <sys/types.h>
+# include <stdint.h>
+# include "ft_ssl.h"
 
 extern const int g_md5_s[];
 extern const int g_md5_K[];
 
-int			md5_prep(int argc, char **argv);
-void		hash_open_err(char *name, char *func_name, int name_len);
+extern const int g_sha256_k[];
 
-typedef struct		s_md5
+typedef struct		s_hash
 {
+	int 			id;
 	int				q;
 	int				r;
 	int				s;
@@ -35,7 +38,7 @@ typedef struct		s_md5
 	ssize_t			input_size;
 	unsigned char 	*from_file;
 	ssize_t 		file_size;
-}					t_md5;
+}					t_hash;
 
 typedef struct s_md5_buf
 {
@@ -44,5 +47,13 @@ typedef struct s_md5_buf
 	uint32_t c;
 	uint32_t d;
 }				t_md5_buf;
+
+void		hash_open_err(char *name, char *func_name, int name_len);
+
+void		md5(unsigned char *msg, ssize_t size, t_hash *opts);
+
+void		sha256(unsigned char *msg, ssize_t size, t_hash *opts);
+
+void add_size_representation(unsigned char *msg, ssize_t size, ssize_t new_size);
 
 #endif
