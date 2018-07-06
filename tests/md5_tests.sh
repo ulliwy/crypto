@@ -119,11 +119,12 @@ echo "${RED}FAIL${NC}"
 fi
 
 # 11
-echo "one more thing" | ../ft_ssl md5 -r -p -s "foo" file -s "bar" > hash_test_results/md5_11_1
-echo "one more thing" | md5 -r -p -s "foo" file -s "bar" > hash_test_results/md5_11_2
+echo "one more thing" | ../ft_ssl md5 -r -p -s "foo" file -s "bar" > hash_test_results/md5_11_1 2> hash_test_results/md5_11_1_err
+echo "one more thing" | md5 -r -p -s "foo" file -s "bar" > hash_test_results/md5_11_2 2> hash_test_results/md5_11_2_err
 
 printf "11. echo, flags: -r -p -s, file, error files: "
-if `diff hash_test_results/md5_11_1 hash_test_results/md5_11_2 > /dev/null`; then
+if `diff hash_test_results/md5_11_1 hash_test_results/md5_11_2 > /dev/null` &&
+	`diff hash_test_results/md5_11_1_err hash_test_results/md5_11_2_err > /dev/null`; then
 echo "${YEL}OK${NC}"
 else
 echo "${RED}FAIL${NC}"

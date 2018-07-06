@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/05 18:21:32 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/05 21:08:39 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int		md5_err_options(char opt)
 
 void add_size_representation(unsigned char *msg, ssize_t size, ssize_t new_size)
 {
+	//printf("repr: %zu\n", size);
 	msg[new_size / 8 - 1] = (char)(size >> (8 * 7));
 	msg[new_size / 8 - 2] = (char)(size >> (8 * 6));
 	msg[new_size / 8 - 3] = (char)(size >> (8 * 5));
@@ -116,7 +117,7 @@ unsigned char *pad_msg(unsigned char *msg, ssize_t *size)
 	bit_size = (*size) * 8;
 	new_size = ((bit_size + 64) / 512) * 512 + 448 + 8 * 8; // in bits
 	new_msg = (unsigned char *)ft_memalloc(new_size / 8 + 8);
-	ft_strcpy((char *)new_msg, (char *)msg);
+	ft_memcpy(new_msg, msg, (size_t)*size);
 	new_msg[*size] = 128;
 	//printf("%lu %lu\n", *size, new_size);
 	add_size_representation(new_msg, *size * 8, new_size);
@@ -185,8 +186,6 @@ void	md5(unsigned char *msg, ssize_t size, t_md5 *opts)
 	int i;
 	uint32_t *buffer;
 
-	//printf("<%s>\n",msg );
-
 	msg = pad_msg(msg, &size);
 	buffer = init_buffer();
 	i = 0;
@@ -206,9 +205,6 @@ static int		parse_opts(char **av, int i, t_md5 *opts, int *parsed)
 		{
 			opts->q = 1;
 			opts->r = 0;
-			// opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
-			// md5(opts->input, opts->input_size, opts);
-			// free(opts->input);
 		}
 		else if (av[i][1] == 'r')
 			opts->r = 1;
@@ -228,7 +224,6 @@ static int		parse_opts(char **av, int i, t_md5 *opts, int *parsed)
 			opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
 			md5(opts->input, opts->input_size, opts);
 			free(opts->input);
-			//opts->input = NULL;
 		}
 		else
 			return (md5_err_options(av[i][1]));
@@ -268,8 +263,16 @@ void	hash_file(char *file_name, t_md5 *opts)
 	if (fd == -1)
 		return (hash_open_err(file_name, "md5", 3));
 	opts->from_file = (unsigned char *)get_from_fd(fd, &(opts->file_size));
-	md5(opts->from_file, opts->file_size, opts);
-	free(opts->from_file);
+	if (errno)
+	{
+		hash_open_err(file_name, "md5", 3);
+		errno = 0;
+	}
+	else
+	{
+		md5(opts->from_file, opts->file_size, opts);
+		free(opts->from_file);
+	}
 	close(fd);
 }
 
@@ -294,16 +297,12 @@ int		md5_prep(int argc, char **argv)
 		hash_file(argv[parsed], &opts);
 		parsed++;
 	}
-	if (!opts.p && ((!parsed && !opts.s) || opts.q))
+	if (!opts.p && !opts.s && !parsed)
 	{
 		opts.input = (unsigned char *)get_from_fd(0, &(opts.input_size));
 		md5(opts.input, opts.input_size, &opts);
 		free(opts.input);
 	}
-	
-	//md5(opts.str, opts.in_size);
-	//if (!opts.p)
-	//	free(opts.input);
 	return (0);
 	// return 1 in case of error
 }

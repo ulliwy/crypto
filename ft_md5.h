@@ -6,12 +6,14 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/05 18:20:36 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/05 20:39:43 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_MD5_H
 # define FT_MD5_H
+
+#include <errno.h>
 
 extern const int g_md5_s[];
 extern const int g_md5_K[];
