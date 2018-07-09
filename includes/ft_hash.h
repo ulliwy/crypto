@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ft_hash.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/06 16:20:15 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/09 11:40:49 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_HASH_H
 # define FT_HASH_H
 
-# include <errno.h>
+// # include <errno.h>
 # include <sys/types.h>
 # include <stdint.h>
-# include "ft_ssl.h"
+// # include "ft_ssl.h"
 
 extern const int g_md5_s[];
 extern const int g_md5_K[];
@@ -55,5 +55,7 @@ void		md5(unsigned char *msg, ssize_t size, t_hash *opts);
 void		sha256(unsigned char *msg, ssize_t size, t_hash *opts);
 
 void add_size_representation(unsigned char *msg, ssize_t size, ssize_t new_size);
+
+void	print_bits(unsigned char octet, int sep); // to remove
 
 #endif

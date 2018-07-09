@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_ssl.h"
+#include "ft_des.h"
 
 unsigned long	reverse_bits(unsigned long msg)
 {
@@ -40,4 +40,26 @@ void			pad(unsigned char *in, ssize_t size)
 		in[size + i] = pads;
 		i++;
 	}
+}
+
+void	opts_init(t_opt *opts)
+{
+	opts->d = 0;
+	opts->a = 0;
+	opts->iv = 0;
+	opts->v = 0;
+	opts->prev = 0;
+	opts->entered_key = NULL;
+	opts->entered_iv = NULL;
+	opts->input_file = NULL;
+	opts->output_file = NULL;
+	opts->in = NULL;
+	opts->out = NULL;
+	opts->mode[ECB] = 0;
+	opts->mode[CBC] = 0;
+	opts->mode[ECB3] = 0;
+	opts->mode[CBC3] = 0;
+	opts->keys[0] = 0;
+	opts->keys[1] = 0;
+	opts->keys[2] = 0;
 }

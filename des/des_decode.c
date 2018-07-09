@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_ssl.h"
+#include "ft_des.h"
+#include "libft.h"
 
 unsigned long	rev_half_permut(unsigned long temp, unsigned long keys[16])
 {
@@ -55,9 +56,9 @@ unsigned long	des_decryption(unsigned long msg, unsigned long keys[16],
 		j++;
 	}
 	temp = rev_half_permut(temp, keys);
-	if (!i && opts.cmd->cbc)
+	if (!i && opts.mode[CBC])
 		temp = temp ^ opts.v;
-	if (i > 0 && opts.cmd->cbc)
+	if (i > 0 && opts.mode[CBC])
 		temp = temp ^ reverse_bits(opts.prev);
 	return (temp);
 }
@@ -70,7 +71,7 @@ unsigned long	additional(unsigned long *msg, int i, t_opt *opts,
 	res = msg[i];
 	if (i > 0)
 		opts->prev = msg[i - 1];
-	if (opts->cmd->ecb3 || opts->cmd->cbc3)
+	if (opts->mode[ECB3] || opts->mode[CBC3])
 	{
 		res = reverse_bits(des_decryption(res, keys[2], *opts, i));
 		res = des_encryption(res, keys[1], *opts, i);

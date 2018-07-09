@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_ssl.h"
+#include "ft_des.h"
 
 static inline uint32_t		rotl32(uint32_t x, unsigned int y)
 {

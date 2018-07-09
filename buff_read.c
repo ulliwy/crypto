@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "ft_ssl.h"
 
 char	*get_from_fd(int fd, ssize_t *r)

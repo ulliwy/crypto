@@ -11,6 +11,10 @@
 /* ************************************************************************** */
 
 #include "ft_hash.h"
+#include "libft.h"
+#include "ft_ssl.h"
+#include <fcntl.h> // for open
+#include <errno.h>
 
 void (*hash_func[2])(unsigned char *msg, ssize_t size, t_hash *opts) =
 {

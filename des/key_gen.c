@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_ssl.h"
+#include "ft_des.h"
+#include "libft.h"
+#include "ft_err.h"
 
 int				get_value(char *c)
 {

@@ -11,6 +11,9 @@
 /* ************************************************************************** */
 
 #include "ft_ssl.h"
+#include "libft.h"
+#include "ft_des.h"
+#include "ft_err.h"
 
 int		parse_command(char **argv, t_cmd *cmd)
 {
@@ -110,18 +113,31 @@ static int		parse_opts(char **av, int i, t_opt *opts)
 	return (i + 1);
 }
 
+void 	get_mode(t_cmd cmd, t_opt *opts)
+{
+	if (cmd.ecb)
+		opts->mode[0] = 1;
+	else if (cmd.cbc)
+		opts->mode[1] = 1;
+	else if (cmd.ecb3)
+		opts->mode[2] = 1;
+	else if (cmd.cbc3)
+		opts->mode[3] = 1;
+}
+
 int		main(int argc, char **argv)
 {
 	t_cmd	cmd;
 	t_opt	opts;
 	int		i;
 
-	opts_init(&opts, &cmd);
 	cmd_init(&cmd);
+	opts_init(&opts);
 	if (argc < 2)
 		return (err_usage(0));
 	if (!parse_command(argv, &cmd))
 		return (err_usage_commands(argv[1]));
+	get_mode(cmd, &opts);
 	i = 2;
 	while (i < argc && cmd.hashing == -1)
 	{

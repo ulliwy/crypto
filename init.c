@@ -26,25 +26,6 @@ char	giv(char c)
 		return (63);
 }
 
-void	opts_init(t_opt *opts, t_cmd *cmd)
-{
-	opts->d = 0;
-	opts->a = 0;
-	opts->iv = 0;
-	opts->v = 0;
-	opts->prev = 0;
-	opts->entered_key = NULL;
-	opts->entered_iv = NULL;
-	opts->input_file = NULL;
-	opts->output_file = NULL;
-	opts->in = NULL;
-	opts->out = NULL;
-	opts->cmd = cmd;
-	opts->keys[0] = 0;
-	opts->keys[1] = 0;
-	opts->keys[2] = 0;
-}
-
 void	cmd_init(t_cmd *cmd)
 {
 	cmd->b64 = 0;

@@ -10,7 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_ssl.h"
+#include "ft_des.h"
+#include "ft_err.h"
+#include "libft.h"
+#include "ft_ssl.h"
+#include <fcntl.h>
 
 unsigned char	*remove_spaces(unsigned char *in, ssize_t *size)
 {

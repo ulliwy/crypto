@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "ft_hash.h"
-#include <stdio.h>
+#include <stdio.h> //for printf
 
 void add_big_endian_size(unsigned char *msg, ssize_t size, ssize_t new_size)
 {

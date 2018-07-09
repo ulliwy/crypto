@@ -10,7 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_ssl.h"
+#include <stdlib.h>
+#include <fcntl.h>
+#include "ft_des.h"
+#include "ft_err.h"
+#include "ft_ssl.h"
+#include "libft.h"
+
 
 void	create_subkeys(unsigned long k, unsigned long keys[16])
 {
@@ -33,7 +39,7 @@ void	create_subkeys(unsigned long k, unsigned long keys[16])
 
 void	key_gen(unsigned long (*keys)[3][16], t_opt *opts)
 {
-	if (opts->cmd->ecb3 || opts->cmd->cbc3)
+	if (opts->mode[ECB3] || opts->mode[CBC3])
 	{
 		create_subkeys((*opts).keys[0], (*keys)[0]);
 		create_subkeys((*opts).keys[1], (*keys)[1]);
@@ -57,8 +63,8 @@ void	des(t_opt *opts)
 	else if ((opts->fd = open(opts->output_file,
 			O_CREAT | O_WRONLY | O_APPEND | O_TRUNC, 0644)) == -1)
 		return (put_open_err(opts->output_file));
-	if (opts->cmd->cbc3)
-		opts->cmd->cbc = 1;
+	if (opts->mode[CBC3])
+		opts->mode[CBC] = 1;
 	if (opts->d)
 		des_ecb_decode(r, *opts);
 	else
@@ -88,9 +94,9 @@ void	des_prep(t_opt opts)
 		read(1, opts.entered_key, 100);
 		allocated = 2;
 	}
-	if (opts.cmd->cbc && !opts.iv)
+	if (opts.mode[CBC] && !opts.iv)
 		read_iv(&opts);
-	if (opts.cmd->ecb3 || opts.cmd->cbc3)
+	if (opts.mode[ECB3] || opts.mode[CBC3])
 	{
 		if (!get_keys3(&opts))
 			return ;

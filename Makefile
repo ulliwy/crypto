@@ -39,7 +39,7 @@ libft/libft.a:
 	$(MAKE) -C libft
 
 ft_ssl: $(SRC) libft/libft.a
-	clang $(FLAGS) $(SRC) -Llibft -lft -o $(NAME)
+	clang $(FLAGS) $(SRC) -Llibft -lft -Iincludes -Ilibft -o $(NAME)
 
 clean:
 	rm -f $(SRC:.c=.o)
