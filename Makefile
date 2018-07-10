@@ -6,31 +6,30 @@
 #    By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2018/07/06 16:03:37 by Ulliwy           ###   ########.fr        #
+#    Updated: 2018/07/10 16:41:17 by Ulliwy           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ssl
 SRC = main.c\
+		init.c\
+		buff_read.c\
+		print_bits.c\
+		put_err.c\
+		\
 		b64/base64.c\
 		\
-		buff_read.c\
 		des/des_tables.c\
 		des/des.c\
-		print_bits.c\
 		des/block_handle.c\
-		put_err.c\
-		init.c\
 		des/key_gen.c\
 		des/bit_permut.c\
 		des/des_decode.c\
 		des/des_encode.c\
 		\
-		prep.c\
-		md5_tables.c\
-		\
-		sha256.c\
-		sha256_tables.c
+		hash_sum/prep_hash.c\
+		hash_sum/hash_tables.c\
+		hash_sum/sha256.c
 FLAGS = -Wall -Wextra -Werror -O3 -flto -march=native
 
 all: $(NAME)

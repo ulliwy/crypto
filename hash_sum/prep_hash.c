@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/09 16:58:08 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/10 16:13:17 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,9 +144,9 @@ void	print_hex(uint32_t c)
 	ft_putchar(base[c % 16]);
 }
 
-void	print_hash(uint32_t *buffer, t_hash *opts)
+void	print_hash(uint32_t *buffer, int buf_size, char *name, t_hash *opts)
 {
-	int i = 0;
+	int i;
 
 	if (opts->pp)
 	{
@@ -156,23 +156,27 @@ void	print_hash(uint32_t *buffer, t_hash *opts)
 
 	if (opts->str && !opts->q && !opts->r)
 	{
-		write(1, "MD5 (\"", 6);
+		write(1, name, ft_strlen(name));
+		write(1, " (\"", 3);
 		write(1, opts->str, opts->str_len);
 		write(1, "\") = ", 5);
 	}
 	else if (!opts->q && opts->filename && !opts->r)
 	{
-		write(1, "MD5 (", 5);
+		write(1, name, ft_strlen(name));
+		write(1, " (", 2);
 		write(1, opts->filename, ft_strlen(opts->filename));
 		write(1, ") = ", 4);
 	}
-
-	while (i < 4)
+	i = 0;
+	while (i < buf_size)
 	{
-		print_hex(buffer[i] & 0xFF);
-		print_hex((buffer[i] & 0xFF00) >> 8);
-		print_hex((buffer[i] & 0xFF0000) >> 8 * 2);
 		print_hex((buffer[i] & 0xFF000000) >> 8 * 3);
+		print_hex((buffer[i] & 0xFF0000) >> 8 * 2);
+		print_hex((buffer[i] & 0xFF00) >> 8);
+		print_hex(buffer[i] & 0xFF);
+		
+		//write(1, " ", 1);
 		i++;
 	}
 
@@ -204,7 +208,13 @@ void	md5(unsigned char *msg, ssize_t size, t_hash *opts)
 		process_chunk(msg + i * 64, buffer);
 		i++;
 	}
-	print_hash(buffer, opts);
+	i = 0;
+	while (i < 4)
+	{
+		buffer[i] = __builtin_bswap32(buffer[i]);
+		i++;
+	}
+	print_hash(buffer, 4, "MD5", opts);
 	free(buffer);
 }
 

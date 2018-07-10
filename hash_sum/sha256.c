@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/06 11:31:15 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/07/10 16:27:26 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/10 16:29:31 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void 	process_sha256_chunk(unsigned char *chunk, uint32_t *buffer)
 	{
 		s0 = right_rotate(w_arr[i - 15], 7) ^ right_rotate(w_arr[i - 15], 18) ^ (w_arr[i - 15] >> 3);
         s1 = right_rotate(w_arr[i - 2], 17) ^ right_rotate(w_arr[i - 2], 19) ^ (w_arr[i - 2] >> 10);
-        w_arr[i] = (w_arr[i - 16] + s0 + w_arr[i - 7] + s1);
+        w_arr[i] = (w_arr[i - 16] + s0 + w_arr[i - 7] + s1);// % 4294967296;
 		i++;
 	}
 
@@ -119,6 +119,8 @@ void 	process_sha256_chunk(unsigned char *chunk, uint32_t *buffer)
         buf.c = buf.b;
         buf.b = buf.a;
         buf.a = temp1 + temp2;
+
+        //printf("%d: %X %X %X %X %X %X %X %X\n", i, buf.a, buf.b, buf.c, buf.d, buf.e, buf.f, buf.g, buf.h);
         i++;
 	}
 
@@ -131,8 +133,8 @@ void 	process_sha256_chunk(unsigned char *chunk, uint32_t *buffer)
 	buffer[6] = buffer[6] + buf.g;
 	buffer[7] = buffer[7] + buf.h;
 
-	printf("res: %x %x %x %x %x %x %x %x\n", buffer[0], buffer[1], buffer[2], buffer[3],
-		buffer[4], buffer[5], buffer[6], buffer[7]);
+	//printf("res: %x %x %x %x %x %x %x %x\n", buffer[0], buffer[1], buffer[2], buffer[3],
+	//	buffer[4], buffer[5], buffer[6], buffer[7]);
 }
 
 void	sha256(unsigned char *msg, ssize_t size, t_hash *opts)

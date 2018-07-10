@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/09 21:17:25 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/10 15:45:47 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,11 @@ void				hash_open_err(char *name, char *func_name, int name_len);
 
 void				md5(unsigned char *msg, ssize_t size, t_hash *opts);
 
-void		sha256(unsigned char *msg, ssize_t size, t_hash *opts);
+void				sha256(unsigned char *msg, ssize_t size, t_hash *opts);
 
-void add_size_representation(unsigned char *msg, ssize_t size, ssize_t new_size);
+void 				add_size_representation(unsigned char *msg, ssize_t size, ssize_t new_size);
 
-void	print_bits(unsigned char octet, int sep); // to remove
+void				print_bits(unsigned char octet, int sep); // to remove
+void				print_hash(uint32_t *buffer, int buf_size, char *name, t_hash *opts);
 
 #endif
