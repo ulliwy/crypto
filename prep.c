@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/06 16:19:51 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/09 16:58:08 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,6 +205,7 @@ void	md5(unsigned char *msg, ssize_t size, t_hash *opts)
 		i++;
 	}
 	print_hash(buffer, opts);
+	free(buffer);
 }
 
 static int		parse_opts(char **av, int i, t_hash *opts, int *parsed)
