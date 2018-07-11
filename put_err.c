@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 15:26:11 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/05 14:48:33 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/10 16:50:14 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,4 +92,18 @@ void	hash_open_err(char *name, char *func_name, int name_len)
 	ft_strcpy(err_msg + name_len + 2, name);
 	perror(err_msg);
 	free(err_msg);
+}
+
+int		md5_err_usage()
+{
+	ft_putstr("usage: ft_ssl md5 [-pqr] [-s string] [files ...]\n");
+	return (1);
+}
+
+int		md5_err_options(char opt)
+{
+	ft_putstr("ft_ssl md5: illegal option -- ");
+	ft_putchar(opt);
+	ft_putstr("\n");
+	return (0);
 }
