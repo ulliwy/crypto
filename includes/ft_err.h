@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/10 16:51:52 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/11 16:04:45 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int		err_usage_commands(char *cmd);
 int		put_iv_err(int type);
 void	*put_stream_err(void);
 int		put_key_err(void);
-int		md5_err_usage();
-int		md5_err_options(char opt);
+int		md5_err_usage(char *command);
+int		md5_err_options(char opt, char *command);
 
 #endif
