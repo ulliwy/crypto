@@ -6,7 +6,7 @@
 #    By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2018/07/10 17:01:10 by Ulliwy           ###   ########.fr        #
+#    Updated: 2018/07/11 16:55:21 by Ulliwy           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,8 @@ SRC = main.c\
 		hash_sum/hash_tables.c\
 		hash_sum/sha256.c\
 		hash_sum/md5.c\
-		hash_sum/print_hash.c
+		hash_sum/print_hash.c\
+		hash_sum/sha512.c
 FLAGS = -Wall -Wextra -Werror -O3 -flto -march=native
 
 all: $(NAME)

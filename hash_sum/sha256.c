@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/06 11:31:15 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/07/10 16:29:31 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/13 14:01:48 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void 	process_sha256_chunk(unsigned char *chunk, uint32_t *buffer)
         buf.d = buf.c;
         buf.c = buf.b;
         buf.b = buf.a;
-        buf.a = temp1 + temp2;
+        buf.a = temp1 + temp2; 
 
         //printf("%d: %X %X %X %X %X %X %X %X\n", i, buf.a, buf.b, buf.c, buf.d, buf.e, buf.f, buf.g, buf.h);
         i++;

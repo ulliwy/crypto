@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/06 15:57:29 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/16 16:34:06 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,11 @@ int		parse_command(char **argv, t_cmd *cmd)
 	else if (!(ft_strcmp(argv[1], "des3-cbc")))
 		cmd->cbc3 = 1;
 	else if (!(ft_strcmp(argv[1], "md5")))
-		cmd->hashing = 0;
+		cmd->hashing = MD5;
 	else if (!(ft_strcmp(argv[1], "sha256")))
-		cmd->hashing = 1;
+		cmd->hashing = SHA256;
+	else if (!(ft_strcmp(argv[1], "sha512")))
+		cmd->hashing = SHA512;
 	else
 		return (0);
 	return (1);

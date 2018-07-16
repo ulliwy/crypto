@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/11 16:17:25 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/16 16:38:29 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,15 @@
 # include <sys/types.h>
 # include <stdint.h>
 
+# define MD5 		0
+# define SHA256 	1
+# define SHA512		2
+
 extern const int g_md5_s[];
 extern const int g_md5_K[];
 
 extern const uint32_t g_sha256_k[];
+extern const uint64_t g_sha512_k[];
 
 typedef struct		s_hash
 {
@@ -58,15 +63,29 @@ typedef struct 		s_sha256_buf
 	uint32_t h;
 } 					t_sha256_buf;
 
+typedef struct 		s_sha512_buf
+{
+	uint64_t a;
+	uint64_t b;
+	uint64_t c;
+	uint64_t d;
+	uint64_t e;
+	uint64_t f;
+	uint64_t g;
+	uint64_t h;
+} 					t_sha512_buf;
+
 void				hash_open_err(char *name, char *func_name, int name_len);
 
 void				md5(unsigned char *msg, ssize_t size, t_hash *opts);
 
 void				sha256(unsigned char *msg, ssize_t size, t_hash *opts);
+void				sha512(unsigned char *msg, ssize_t size, t_hash *opts);
 
 void 				add_size_representation(unsigned char *msg, ssize_t size, ssize_t new_size);
+void 				add_big_endian_size(unsigned char *msg, ssize_t size, ssize_t new_size);
 
 void				print_bits(unsigned char octet, int sep); // to remove
-void				print_hash(uint32_t *buffer, int buf_size, char *name, t_hash *opts);
+void				print_hash(void *buffer, int buf_size, char *name, t_hash *opts);
 
 #endif

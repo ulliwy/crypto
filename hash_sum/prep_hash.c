@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/11 16:24:57 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/11 16:56:09 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,11 @@
 #include <unistd.h>
 #include <stdio.h>
 
-void (*hash_func[2])(unsigned char *msg, ssize_t size, t_hash *opts) =
+void (*hash_func[3])(unsigned char *msg, ssize_t size, t_hash *opts) =
 {
 	&md5,
-	&sha256
+	&sha256,
+	&sha512
 };
 
 void		parse_opts(int argc, char **argv, t_hash *opts, int *err)
@@ -103,15 +104,13 @@ void	hash_file(char *file_name, t_hash *opts, char *exec)
 	close(fd);
 }
 
-int			hash_prep(int argc, char **argv, int func_id)
+int		hash_prep(int argc, char **argv, int func_id)
 {
-	int 	i;
 	t_hash	opts;
-	int err;
+	int		err;
 
 	err = 0;
 	hash_opts_init(&opts, func_id);
-	i = 2;
 	optind = 2;
 	parse_opts(argc, argv, &opts, &err);
 	if (optind < argc)
@@ -128,5 +127,4 @@ int			hash_prep(int argc, char **argv, int func_id)
 		free(opts.input);
 	}
 	return (err);
-	// return 1 in case of error
 }

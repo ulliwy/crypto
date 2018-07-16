@@ -6,7 +6,7 @@
 /*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:47:44 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/07/09 21:21:48 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/16 16:33:36 by Ulliwy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@
 # include <sys/types.h>
 
 # define BUFF_SIZE	1024*1024
+# define MD5 		0
+# define SHA256 	1
+# define SHA512		2
+
 
 typedef struct			s_cmd
 {
