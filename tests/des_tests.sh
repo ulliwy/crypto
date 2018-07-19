@@ -13,7 +13,6 @@ echo "---------------------"
 
 ../ft_ssl base64 -e -i bigtest -o des_test_results/eb64_1_1
 base64 -i bigtest -o des_test_results/eb64_1_2
-echo "des_test_results:"
 printf "base64 encode: "
 if `diff des_test_results/eb64_1_1 des_test_results/eb64_1_2 > /dev/null`; then
 echo "${YEL}OK${NC}"

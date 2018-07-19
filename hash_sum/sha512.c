@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sha512.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/06 11:31:15 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/07/16 16:47:51 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/19 14:35:15 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,10 +126,6 @@ void 	process_sha512_chunk(unsigned char *chunk, uint64_t *buffer)
 	buffer[5] = buffer[5] + buf.f;
 	buffer[6] = buffer[6] + buf.g;
 	buffer[7] = buffer[7] + buf.h;
-
-	printf("%" PRIx64 " %" PRIx64 " %" PRIx64 " %" PRIx64 
-        	" %" PRIx64 " %" PRIx64 " %" PRIx64 " %" PRIx64 "\n",
-        	buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7]);
 }
 
 void	sha512(unsigned char *msg, ssize_t size, t_hash *opts)
