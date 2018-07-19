@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   des.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/14 12:46:00 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/06/28 17:27:13 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/19 10:35:31 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include "ft_err.h"
 #include "ft_ssl.h"
 #include "libft.h"
-
 
 void	create_subkeys(unsigned long k, unsigned long keys[16])
 {

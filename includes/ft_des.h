@@ -6,19 +6,19 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/09 11:01:42 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/09 11:51:25 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/07/19 10:41:49 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_DES_H
-#define FT_DES_H
+# define FT_DES_H
 
-#include <unistd.h>
+# include <unistd.h>
 
-#define ECB 0
-#define CBC 1
-#define ECB3 2
-#define CBC3 3
+# define ECB 0
+# define CBC 1
+# define ECB3 2
+# define CBC3 3
 
 extern	unsigned char	g_pc1[];
 extern	unsigned char	g_pc2[];
@@ -51,12 +51,13 @@ typedef struct			s_opt
 	unsigned char		*in;
 	unsigned char		*out;
 	int					fd;
-	int 				mode[4];
+	int					mode[4];
 	unsigned long		keys[3];
 }						t_opt;
 
 void					opts_init(t_opt *opts);
 char					giv(char c);
+int						parse_opts(char **av, int i, t_opt *opts);
 
 void					b64(t_opt *opts);
 void					b64_encode(t_opt *opts, ssize_t r);
@@ -76,7 +77,6 @@ unsigned long			reverse_bits(unsigned long msg);
 void					pad(unsigned char *in, ssize_t size);
 void					permut_c0d0(unsigned long *c0, unsigned long *d0,
 							unsigned long keys[16]);
-
 
 void					key_gen(unsigned long (*keys)[3][16], t_opt *opts);
 int						get_key(t_opt *opts);

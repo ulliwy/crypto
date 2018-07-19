@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   md5.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 16:34:08 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/07/10 17:00:44 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/19 10:38:41 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	process_chunk(unsigned char *chunk, uint32_t *buffer) // 16 words
 			F = buf.c ^ (buf.b | ~(buf.d));
 			g = (7 * i) % 16;
 		}
-		F = F + buf.a + g_md5_K[i] + words[g];
+		F = F + buf.a + g_md5_k[i] + words[g];
 		buf.a = buf.d;
 		buf.d = buf.c;
 		buf.c = buf.b;

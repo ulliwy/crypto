@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 11:44:59 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/16 16:34:06 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/19 10:33:54 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,16 @@
 #include "libft.h"
 #include "ft_des.h"
 #include "ft_err.h"
+
+void	cmd_init(t_cmd *cmd)
+{
+	cmd->b64 = 0;
+	cmd->ecb = 0;
+	cmd->cbc = 0;
+	cmd->ecb3 = 0;
+	cmd->cbc3 = 0;
+	cmd->hashing = -1;
+}
 
 int		parse_command(char **argv, t_cmd *cmd)
 {
@@ -42,80 +52,7 @@ int		parse_command(char **argv, t_cmd *cmd)
 	return (1);
 }
 
-int		get_iv(t_opt *opts, char *str)
-{
-	int		i;
-	char	c;
-
-	i = 0;
-	if (!str)
-		return (put_iv_err(2));
-	while (*str && i < 16)
-	{
-		c = ft_tolower(*str);
-		if (!((c >= 'a' && c <= 'f') || (c >= '0' && c <= '9')))
-			return (put_iv_err(1));
-		if (c >= 'a' && c <= 'f')
-			c = c - 87;
-		else
-			c = c - '0';
-		opts->v = opts->v * 16 + c;
-		i++;
-		str++;
-	}
-	while (i++ < 16)
-		opts->v = opts->v * 16;
-	return (1);
-}
-
-static int		parse_opts2(char **av, int i, t_opt *opts)
-{
-	if (av[i][1] == 'i')
-	{
-		opts->input_file = av[i + 1];
-		i++;
-	}
-	else if (av[i][1] == 'o')
-	{
-		opts->output_file = av[i + 1];
-		i++;
-	}
-	else if (av[i][1] == 'k')
-	{
-		opts->entered_key = av[i + 1];
-		i++;
-	}
-	else
-		return (err_options(av[i][1]));
-	return (i + 1);
-}
-
-static int		parse_opts(char **av, int i, t_opt *opts)
-{
-	if (av[i][0] == '-' && !av[i][2])
-	{
-		if (av[i][1] == 'd')
-			opts->d = 1;
-		else if (av[i][1] == 'a')
-			opts->a = 1;
-		else if (av[i][1] == 'e')
-			;
-		else if (av[i][1] == 'v')
-		{
-			opts->iv = 1;
-			if (!get_iv(opts, av[i + 1]))
-				return (-1);
-			i++;
-		}
-		else
-			return (parse_opts2(av, i, opts));
-	}
-	else
-		return (0);
-	return (i + 1);
-}
-
-void 	get_mode(t_cmd cmd, t_opt *opts)
+void	get_mode(t_cmd cmd, t_opt *opts)
 {
 	if (cmd.ecb)
 		opts->mode[0] = 1;

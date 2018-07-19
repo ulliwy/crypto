@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   block_handle.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/07 12:43:49 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/06/28 17:27:09 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/19 10:35:15 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void			pad(unsigned char *in, ssize_t size)
 	}
 }
 
-void	opts_init(t_opt *opts)
+void			opts_init(t_opt *opts)
 {
 	opts->d = 0;
 	opts->a = 0;

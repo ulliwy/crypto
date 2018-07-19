@@ -3,22 +3,23 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+         #
+#    By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2018/07/11 16:55:21 by Ulliwy           ###   ########.fr        #
+#    Updated: 2018/07/19 10:31:22 by iprokofy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ssl
 SRC = main.c\
-		init.c\
 		buff_read.c\
 		print_bits.c\
 		put_err.c\
+		put_usage_err.c\
 		\
 		b64/base64.c\
 		\
+		des/des_prep.c\
 		des/des_tables.c\
 		des/des.c\
 		des/block_handle.c\

@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_err.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/11 16:04:45 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/19 10:42:17 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_ERR_H
-#define FT_ERR_H
+# define FT_ERR_H
 
 void	put_open_err(char *name);
 int		err_usage(int type);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prep_hash.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/11 16:56:09 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/19 10:05:28 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void (*hash_func[3])(unsigned char *msg, ssize_t size, t_hash *opts) =
 	&sha512
 };
 
-void		parse_opts(int argc, char **argv, t_hash *opts, int *err)
+void		parse_hash_opts(int argc, char **argv, t_hash *opts, int *err)
 {
 	int opt;
 
@@ -112,7 +112,7 @@ int		hash_prep(int argc, char **argv, int func_id)
 	err = 0;
 	hash_opts_init(&opts, func_id);
 	optind = 2;
-	parse_opts(argc, argv, &opts, &err);
+	parse_hash_opts(argc, argv, &opts, &err);
 	if (optind < argc)
 		while (optind < argc)
 		{

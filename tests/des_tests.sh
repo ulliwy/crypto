@@ -1,5 +1,5 @@
 mkdir des_test_results
-cat ../orig > bigtest
+cat des_tests.sh > bigtest
 YEL='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
