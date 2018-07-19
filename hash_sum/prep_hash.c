@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:34:02 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/19 10:05:28 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/07/19 12:03:54 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,48 +14,53 @@
 #include "libft.h"
 #include "ft_err.h"
 #include "ft_ssl.h"
-#include <fcntl.h> // for open
+#include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
 #include <stdio.h>
 
-void (*hash_func[3])(unsigned char *msg, ssize_t size, t_hash *opts) =
+void	(*g_hash_func[3])(unsigned char *msg, ssize_t size, t_hash *opts) =
 {
 	&md5,
 	&sha256,
 	&sha512
 };
 
-void		parse_hash_opts(int argc, char **argv, t_hash *opts, int *err)
+void	switch_case(int opt, t_hash *opts)
+{
+	if (opt == 'q')
+	{
+		opts->q = 1;
+		opts->r = 0;
+	}
+	else if (opt == 'r')
+		opts->r = 1;
+	else if (opt == 's')
+	{
+		opts->s = 1;
+		opts->str = (unsigned char *)optarg;
+		opts->str_len = (ssize_t)ft_strlen(optarg);
+		(g_hash_func[opts->id])(opts->str, opts->str_len, opts);
+		opts->str = NULL;
+	}
+	else if (opt == 'p')
+	{
+		opts->p = 1;
+		opts->pp = 1;
+		opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
+		(g_hash_func[opts->id])(opts->input, opts->input_size, opts);
+		free(opts->input);
+	}
+}
+
+void	parse_hash_opts(int argc, char **argv, t_hash *opts, int *err)
 {
 	int opt;
 
 	while ((opt = getopt(argc, argv, "qrps:")) != -1)
 	{
-		if (opt == 'q')
-		{
-			opts->q = 1;
-	 		opts->r = 0;
-		}
-		else if (opt == 'r')
-			opts->r = 1;
-		else if (opt == 's')
-		{
-			opts->s = 1;
-			opts->str = (unsigned char *)optarg;
-			opts->str_len = (ssize_t)ft_strlen(optarg);
-			(hash_func[opts->id])(opts->str, opts->str_len, opts);
-			opts->str = NULL;
-
-		}
-		else if (opt == 'p')
-		{
-			opts->p = 1;
-			opts->pp = 1;
-			opts->input = (unsigned char *)get_from_fd(0, &(opts->input_size));
-			(hash_func[opts->id])(opts->input, opts->input_size, opts);
-			free(opts->input);
-		}
+		if (opt == 'q' || opt == 'r' || opt == 's' || opt == 'p')
+			switch_case(opt, opts);
 		else
 		{
 			*err = 1;
@@ -73,12 +78,9 @@ void	hash_opts_init(t_hash *opts, int func_id)
 	opts->p = 0;
 	opts->pp = 0;
 	opts->filename = NULL;
-
 	opts->str = NULL;
-
 	opts->input = NULL;
 	opts->input_size = 0;
-
 	opts->from_file = NULL;
 	opts->file_size = 0;
 }
@@ -98,7 +100,7 @@ void	hash_file(char *file_name, t_hash *opts, char *exec)
 	}
 	else
 	{
-		(hash_func[opts->id])(opts->from_file, opts->file_size, opts);
+		(g_hash_func[opts->id])(opts->from_file, opts->file_size, opts);
 		free(opts->from_file);
 	}
 	close(fd);
@@ -123,7 +125,7 @@ int		hash_prep(int argc, char **argv, int func_id)
 	else if (!opts.p && !opts.s && !err)
 	{
 		opts.input = (unsigned char *)get_from_fd(0, &(opts.input_size));
-		(hash_func[opts.id])(opts.input, opts.input_size, &opts);
+		(g_hash_func[opts.id])(opts.input, opts.input_size, &opts);
 		free(opts.input);
 	}
 	return (err);

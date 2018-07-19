@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_hash.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ulliwy <Ulliwy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 16:37:43 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/07/16 16:49:34 by Ulliwy           ###   ########.fr       */
+/*   Updated: 2018/07/19 12:59:56 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 
 void	print_hex(uint32_t c)
 {
-	char	base[17] = "0123456789abcdef";
+	char	base[17];
 
+	ft_strcpy(base, "0123456789abcdef");
 	ft_putchar(base[c / 16]);
 	ft_putchar(base[c % 16]);
 }
 
-void print_hex64(uint64_t *buffer, int buf_size)
+void	print_hex64(uint64_t *buffer, int buf_size)
 {
 	int i;
 
@@ -40,7 +41,7 @@ void print_hex64(uint64_t *buffer, int buf_size)
 	}
 }
 
-void print_hex32(uint32_t *buffer, int buf_size)
+void	print_hex32(uint32_t *buffer, int buf_size)
 {
 	int i;
 
@@ -55,13 +56,8 @@ void print_hex32(uint32_t *buffer, int buf_size)
 	}
 }
 
-void	print_hash(void *buffer, int buf_size, char *name, t_hash *opts)
+void	print_prefix(t_hash *opts, char *name)
 {
-	if (opts->pp)
-	{
-		write(1, opts->input, opts->input_size);
-		opts->pp = 0;
-	}
 	if (opts->str && !opts->q && !opts->r)
 	{
 		write(1, name, ft_strlen(name));
@@ -76,6 +72,16 @@ void	print_hash(void *buffer, int buf_size, char *name, t_hash *opts)
 		write(1, opts->filename, ft_strlen(opts->filename));
 		write(1, ") = ", 4);
 	}
+}
+
+void	print_hash(void *buffer, int buf_size, char *name, t_hash *opts)
+{
+	if (opts->pp)
+	{
+		write(1, opts->input, opts->input_size);
+		opts->pp = 0;
+	}
+	print_prefix(opts, name);
 	if (opts->id == SHA512)
 		print_hex64(buffer, buf_size);
 	else
@@ -91,6 +97,5 @@ void	print_hash(void *buffer, int buf_size, char *name, t_hash *opts)
 		write(1, " ", 1);
 		write(1, opts->filename, ft_strlen(opts->filename));
 	}
-
 	write(1, "\n", 1);
 }

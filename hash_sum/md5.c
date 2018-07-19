@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 16:34:08 by Ulliwy            #+#    #+#             */
-/*   Updated: 2018/07/19 10:38:41 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/07/19 11:54:31 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 #include <stdlib.h>
 #include "libft.h"
 
-void add_size_representation(unsigned char *msg, ssize_t size, ssize_t new_size)
+void		add_size_representation(unsigned char *msg, ssize_t size,
+									ssize_t new_size)
 {
-	//printf("repr: %zu\n", size);
 	msg[new_size / 8 - 1] = (char)(size >> (8 * 7));
 	msg[new_size / 8 - 2] = (char)(size >> (8 * 6));
 	msg[new_size / 8 - 3] = (char)(size >> (8 * 5));
@@ -27,7 +27,7 @@ void add_size_representation(unsigned char *msg, ssize_t size, ssize_t new_size)
 	msg[new_size / 8 - 8] = (char)(size >> (8 * 0));
 }
 
-uint32_t *init_buffer()
+uint32_t	*init_buffer(void)
 {
 	uint32_t *buf;
 
@@ -39,55 +39,62 @@ uint32_t *init_buffer()
 	return (buf);
 }
 
-uint32_t left_rotate(uint32_t x, int c)
+uint32_t	left_rotate(uint32_t x, int c)
 {
 	return (x << c) | (x >> (32 - c));
 }
 
-void	process_chunk(unsigned char *chunk, uint32_t *buffer) // 16 words
+void		process_word(int i, uint32_t *f, uint32_t *g, t_md5_buf *buf)
 {
-	uint32_t *words;
-	t_md5_buf buf;
-	int i;
-	uint32_t F;
-	uint32_t g;
+	if (i < 16)
+	{
+		*f = (buf->b & buf->c) | (~(buf->b) & buf->d);
+		*g = i;
+	}
+	else if (i < 32)
+	{
+		*f = (buf->d & buf->b) | (~(buf->d) & buf->c);
+		*g = (5 * i + 1) % 16;
+	}
+	else if (i < 48)
+	{
+		*f = buf->b ^ buf->c ^ buf->d;
+		*g = (3 * i + 5) % 16;
+	}
+	else if (i < 64)
+	{
+		*f = buf->c ^ (buf->b | ~(buf->d));
+		*g = (7 * i) % 16;
+	}
+}
+
+void		update_word_buf(t_md5_buf *buf, int i, uint32_t f)
+{
+	buf->a = buf->d;
+	buf->d = buf->c;
+	buf->c = buf->b;
+	buf->b = buf->b + left_rotate(f, g_md5_s[i]);
+}
+
+void		process_chunk(unsigned char *chunk, uint32_t *buffer)
+{
+	uint32_t	*words;
+	t_md5_buf	buf;
+	int			i;
+	uint32_t	f;
+	uint32_t	g;
 
 	words = (uint32_t *)chunk;
-
 	buf.a = buffer[0];
 	buf.b = buffer[1];
 	buf.c = buffer[2];
 	buf.d = buffer[3];
-
 	i = 0;
 	while (i < 64)
 	{
-		if (i < 16)
-		{
-			F = (buf.b & buf.c) | (~(buf.b) & buf.d);
-			g = i;
-		}
-		else if (i < 32)
-		{
-			F = (buf.d & buf.b) | (~(buf.d) & buf.c);
-			g = (5 * i + 1) % 16;
-		}
-		else if (i < 48)
-		{
-			F = buf.b ^ buf.c ^ buf.d;
-			g = (3 * i + 5) % 16;
-		}
-		else if (i < 64)
-		{
-			F = buf.c ^ (buf.b | ~(buf.d));
-			g = (7 * i) % 16;
-		}
-		F = F + buf.a + g_md5_k[i] + words[g];
-		buf.a = buf.d;
-		buf.d = buf.c;
-		buf.c = buf.b;
-		buf.b = buf.b + left_rotate(F, g_md5_s[i]);
-		//printf("%d A: %u, B: %u, C: %u, D: %u\n", i, buf.a, buf.b, buf.c, buf.d);
+		process_word(i, &f, &g, &buf);
+		f = f + buf.a + g_md5_k[i] + words[g];
+		update_word_buf(&buf, i, f);
 		i++;
 	}
 	buffer[0] = buffer[0] + buf.a;
@@ -96,28 +103,26 @@ void	process_chunk(unsigned char *chunk, uint32_t *buffer) // 16 words
 	buffer[3] = buffer[3] + buf.d;
 }
 
-unsigned char *md5_pad_msg(unsigned char *msg, ssize_t *size)
+unsigned char	*md5_pad_msg(unsigned char *msg, ssize_t *size)
 {
-	ssize_t bit_size;
-	ssize_t new_size;
-	unsigned char *new_msg;
+	ssize_t			bit_size;
+	ssize_t			new_size;
+	unsigned char	*new_msg;
 
 	bit_size = (*size) * 8;
-	new_size = ((bit_size + 64) / 512) * 512 + 448 + 8 * 8; // in bits
+	new_size = ((bit_size + 64) / 512) * 512 + 448 + 8 * 8;
 	new_msg = (unsigned char *)ft_memalloc(new_size / 8 + 8);
 	ft_memcpy(new_msg, msg, (size_t)*size);
 	new_msg[*size] = 128;
-	//printf("%lu %lu\n", *size, new_size);
 	add_size_representation(new_msg, *size * 8, new_size);
 	*size = new_size / 8;
-	//free(msg);
 	return (new_msg);
 }
 
 void	md5(unsigned char *msg, ssize_t size, t_hash *opts)
 {
-	int i;
-	uint32_t *buffer;
+	int			i;
+	uint32_t	*buffer;
 
 	msg = md5_pad_msg(msg, &size);
 	buffer = init_buffer();

@@ -1,3 +1,4 @@
 rm -rf des_test_results
-rm -rf hash_test_results
-rm -rf bigtest file
+rm -rf md5_test_results
+rm -rf sha256_test_results
+rm -rf bigtest file testfile testfile2

@@ -1,3 +1,4 @@
+rm -rf des_test_results 
 mkdir des_test_results
 cat des_tests.sh > bigtest
 YEL='\033[1;33m'
@@ -5,6 +6,10 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 # base64
+
+echo "---------------------"
+echo "B64/DES test results:"
+echo "---------------------"
 
 ../ft_ssl base64 -e -i bigtest -o des_test_results/eb64_1_1
 base64 -i bigtest -o des_test_results/eb64_1_2
