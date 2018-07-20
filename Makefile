@@ -6,7 +6,7 @@
 #    By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/05 13:01:02 by iprokofy          #+#    #+#              #
-#    Updated: 2018/07/19 10:31:22 by iprokofy         ###   ########.fr        #
+#    Updated: 2018/07/20 13:19:02 by iprokofy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,8 @@ SRC = main.c\
 		\
 		hash_sum/prep_hash.c\
 		hash_sum/hash_tables.c\
+		hash_sum/pad_msg.c\
+		hash_sum/utils.c\
 		hash_sum/sha256.c\
 		hash_sum/md5.c\
 		hash_sum/print_hash.c\

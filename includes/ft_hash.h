@@ -6,7 +6,7 @@
 /*   By: iprokofy <iprokofy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 14:49:35 by iprokofy          #+#    #+#             */
-/*   Updated: 2018/07/19 10:47:34 by iprokofy         ###   ########.fr       */
+/*   Updated: 2018/07/20 13:23:50 by iprokofy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,13 +82,16 @@ void				md5(unsigned char *msg, ssize_t size, t_hash *opts);
 void				sha256(unsigned char *msg, ssize_t size, t_hash *opts);
 void				sha512(unsigned char *msg, ssize_t size, t_hash *opts);
 
-void				add_size_representation(unsigned char *msg, ssize_t size,
-											ssize_t new_size);
-void				add_big_endian_size(unsigned char *msg, ssize_t size,
-										ssize_t new_size);
+unsigned char		*sha512_pad_msg(unsigned char *msg, ssize_t *size);
+unsigned char		*sha256_pad_msg(unsigned char *msg, ssize_t *size);
+unsigned char		*md5_pad_msg(unsigned char *msg, ssize_t *size);
 
 void				print_bits(unsigned char octet, int sep);
 void				print_hash(void *buffer, int buf_size, char *name,
 								t_hash *opts);
+
+uint64_t			right_rotate_64(uint64_t x, int c);
+uint32_t			right_rotate(uint32_t x, int c);
+uint32_t			left_rotate(uint32_t x, int c);
 
 #endif
