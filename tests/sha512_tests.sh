@@ -150,70 +150,72 @@ else
 echo "${RED}FAIL${NC}"
 fi
 
-# # 12
-# echo "one more thing" | ../ft_ssl sha512 -r -p -s "foo" file -s "bar" > sha512_test_results/sha512_11_1 2> sha512_test_results/sha512_11_1_err
-# #echo "one more thing" | sha512 -r -p -s "foo" file -s "bar" > sha512_test_results/sha512_11_2 2> sha512_test_results/sha512_11_2_err
+# 12
+echo "one more thing" | ../ft_ssl sha512 -r -p -s "foo" file -s "bar" > sha512_test_results/sha512_11_1 2> sha512_test_results/sha512_11_1_err
+echo "one more thing" > sha512_test_results/sha512_11_2
+echo "one more thing" | openssl sha512 >> sha512_test_results/sha512_11_2
+printf "foo" | openssl sha512 >> sha512_test_results/sha512_11_2
+printf %s "$(< sha512_test_results/sha512_11_2)" > sha512_test_results/sha512_11_2
+printf " \"foo\"\n" >> sha512_test_results/sha512_11_2
+cat file | openssl sha512 >> sha512_test_results/sha512_11_2
+printf %s "$(< sha512_test_results/sha512_11_2)" > sha512_test_results/sha512_11_2
+printf " file\n" >> sha512_test_results/sha512_11_2
+printf "../ft_ssl: -s: No such file or directory
+../ft_ssl: bar: No such file or directory\n" > sha512_test_results/sha512_11_2_err
 
-# printf "one more thing
-# 720bbf63077e0bea3b70c87954123daa6fcf32f973f4d646622bd016b140ec75
-# 2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae \"foo\"
-# f9eb9a5a063eb386a18525c074e1065c316ec434f911e0d7d59ba2d9fd134705 file\n" > sha512_test_results/sha512_11_2
-# printf "../ft_ssl: -s: No such file or directory\n../ft_ssl: bar: No such file or directory\n" > sha512_test_results/sha512_11_2_err
+printf "12. echo, flags: -r -p -s, file, error files: "
+if `diff sha512_test_results/sha512_11_1 sha512_test_results/sha512_11_2 > /dev/null` &&
+ 	`diff sha512_test_results/sha512_11_1_err sha512_test_results/sha512_11_2_err > /dev/null`; then
+echo "${YEL}OK${NC}"
+else
+echo "${RED}FAIL${NC}"
+fi
 
-# printf "12. echo, flags: -r -p -s, file, error files: "
-# if `diff sha512_test_results/sha512_11_1 sha512_test_results/sha512_11_2 > /dev/null`&&
-#  	`diff sha512_test_results/sha512_11_1_err sha512_test_results/sha512_11_2_err > /dev/null`; then
-# echo "${YEL}OK${NC}"
-# else
-# echo "${RED}FAIL${NC}"
-# fi
+# 13
+echo "just to be extra clear" | ../ft_ssl sha512 -r -q -p -s "foo" file > sha512_test_results/sha512_12_1
+echo "just to be extra clear"  > sha512_test_results/sha512_12_2
+echo "just to be extra clear" | openssl sha512 >> sha512_test_results/sha512_12_2
+printf "foo" | openssl sha512 >> sha512_test_results/sha512_12_2
+cat file | openssl sha512 >> sha512_test_results/sha512_12_2
 
-# # 13
-# echo "just to be extra clear" | ../ft_ssl sha512 -r -q -p -s "foo" file > sha512_test_results/sha512_12_1
-# #echo "just to be extra clear" | openssl sha512 file > sha512_test_results/sha512_12_2
-# printf "just to be extra clear
-# 41c3da28172faf72bb777d6a428b6d801427d02513c56cd9e3672f44383f8eee
-# 2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae
-# f9eb9a5a063eb386a18525c074e1065c316ec434f911e0d7d59ba2d9fd134705\n" > sha512_test_results/sha512_12_2
+printf "13. echo, flags: -r -q -p -s, file: "
+if `diff sha512_test_results/sha512_12_1 sha512_test_results/sha512_12_2 > /dev/null`; then
+echo "${YEL}OK${NC}"
+else
+echo "${RED}FAIL${NC}"
+fi
 
-# printf "13. echo, flags: -r -q -p -s, file: "
-# if `diff sha512_test_results/sha512_12_1 sha512_test_results/sha512_12_2 > /dev/null`; then
-# echo "${YEL}OK${NC}"
-# else
-# echo "${RED}FAIL${NC}"
-# fi
+# 14
+echo "" | ../ft_ssl sha512 > sha512_test_results/sha512_14_1
+echo "" | openssl sha -sha512 > sha512_test_results/sha512_14_2
 
-# # 14
-# echo "" | ../ft_ssl sha512 > sha512_test_results/sha512_14_1
-# echo "" | openssl sha -sha512 > sha512_test_results/sha512_14_2
+printf "14. echo empty string: "
+if `diff sha512_test_results/sha512_14_1 sha512_test_results/sha512_14_2 > /dev/null`; then
+echo "${YEL}OK${NC}"
+else
+echo "${RED}FAIL${NC}"
+fi
 
-# printf "14. echo empty string: "
-# if `diff sha512_test_results/sha512_14_1 sha512_test_results/sha512_14_2 > /dev/null`; then
-# echo "${YEL}OK${NC}"
-# else
-# echo "${RED}FAIL${NC}"
-# fi
+# 15
+printf "\0\0\n" > testfile
+cat testfile | ../ft_ssl sha512 > sha512_test_results/sha512_15_1
+cat testfile | openssl sha -sha512 > sha512_test_results/sha512_15_2
 
-# # 15
-# printf "\0\0\n" > testfile
-# cat testfile | ../ft_ssl sha512 > sha512_test_results/sha512_15_1
-# cat testfile | openssl sha -sha512 > sha512_test_results/sha512_15_2
+printf "15. echo zero bytes: "
+if `diff sha512_test_results/sha512_15_1 sha512_test_results/sha512_15_2 > /dev/null`; then
+echo "${YEL}OK${NC}"
+else
+echo "${RED}FAIL${NC}"
+fi
 
-# printf "15. echo zero bytes: "
-# if `diff sha512_test_results/sha512_15_1 sha512_test_results/sha512_15_2 > /dev/null`; then
-# echo "${YEL}OK${NC}"
-# else
-# echo "${RED}FAIL${NC}"
-# fi
+# 16
+ls -lra /dev > testfile2
+cat testfile2 | ../ft_ssl sha512 > sha512_test_results/sha512_16_1
+cat testfile2 | openssl sha -sha512 > sha512_test_results/sha512_16_2
 
-# # 16
-# ls -lra /dev > testfile2
-# cat testfile2 | ../ft_ssl sha512 > sha512_test_results/sha512_16_1
-# cat testfile2 | openssl sha -sha512 > sha512_test_results/sha512_16_2
-
-# printf "16. ls -lra /dev: "
-# if `diff sha512_test_results/sha512_16_1 sha512_test_results/sha512_16_2 > /dev/null`; then
-# echo "${YEL}OK${NC}"
-# else
-# echo "${RED}FAIL${NC}"
-# fi
+printf "16. ls -lra /dev: "
+if `diff sha512_test_results/sha512_16_1 sha512_test_results/sha512_16_2 > /dev/null`; then
+echo "${YEL}OK${NC}"
+else
+echo "${RED}FAIL${NC}"
+fi
